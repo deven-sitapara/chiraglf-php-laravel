@@ -2,23 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Search extends Model
 {
+    use HasFactory;
 
-    protected $table;
-    protected $fillable;
 
-    public function __construct(array $attributes = [])
-    {
-        // parent::__construct($attributes);
+    protected $table = 'searches';
+    protected $fillable = ['file_id', 'search_number', 'date', 'years_required'];
 
-        $config = config('modelConfig.models.Search');
-
-        $this->table = $config['table'];
-        $this->fillable = $config['fillable'];
-    }
+    // CREATE TABLE "searches" ("id" integer primary key autoincrement not null, "file_id" integer not null, "search_number" varchar not null, "date" date not null, "years_required" integer not null, "created_at" datetime, "updated_at" datetime, foreign key("file_id") references "files"("id") on delete cascade)
 
     // belogs to
     public function file()

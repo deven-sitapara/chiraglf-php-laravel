@@ -1,0 +1,131 @@
+Table File {
+  id int [pk, increment] // Primary key
+  branch int [ref: > Branches.id] // Foreign key referencing Branches
+  file_number varchar
+  date date
+  company int [ref: > Companies.id] // Foreign key referencing Companies
+  company_reference_number varchar
+  borrower_name varchar
+  owner_name varchar
+  property_descriptions text
+  status enum("Login", "Queries", "Update", "Handover", "Close")
+  status_message text
+  // Following is common for all tables
+  createdBy int [ref: > Users.id]
+  created_at datetime
+  updated_at datetime
+}
+
+Table TSR {
+  id int [pk, increment] // Primary key
+  file_number int [ref: > File.id] // Foreign key
+  tsr_number varchar [unique] // Auto-generate format: #file-TS-1
+  date date
+  // Following is common for all tables
+  createdBy int [ref: > Users.id]
+  created_at datetime
+  updated_at datetime
+}
+
+Table Document {
+  id int [pk, increment] // Primary key
+  document_number varchar [unique]
+  file_number int [ref: > File.id] // Foreign key
+  date date
+  type enum("MOD", "Release Deed", "Sale Deed", "Declaration Deed", "Rectification Deed", "Other Documents")
+  executing_party_name varchar
+  executing_party_mobile varchar
+  contact_person_mobile varchar
+  // Following is common for all tables
+  createdBy int [ref: > Users.id]
+  created_at datetime
+  updated_at datetime
+}
+
+Table VR {
+  id int [pk, increment] // Primary key
+  file_number int [ref: > File.id] // Foreign key
+  vr_number varchar [unique] // Auto-generate format: #file-VR-1
+  date date
+  // Following is common for all tables
+  createdBy int [ref: > Users.id]
+  created_at datetime
+  updated_at datetime
+}
+
+Table Search {
+  id int [pk, increment] // Primary key
+  file_number int [ref: > File.id] // Foreign key
+  search_number varchar [unique] // Auto-generate format: #file-SR-1
+  date date
+  years_required int
+  // Following is common for all tables
+  createdBy int [ref: > Users.id]
+  created_at datetime
+  updated_at datetime
+}
+
+Table ExtraWork {
+  id int [pk, increment] // Primary key
+  ew_number varchar [unique] // Auto-generate format: #file-EW-1
+  file_number int [ref: > File.id] // Foreign key
+  date date
+  customer_contact varchar
+  customer_email varchar
+  work_details text
+  total_amount decimal(10, 2)
+  received_amount decimal(10, 2)
+}
+
+Table BalanceTransfer {
+  id int [pk, increment] // Primary key
+  bt_number varchar [unique] // Auto-generate format: #file-BT-1
+  file_number int [ref: > File.id] // Foreign key
+  date date
+  status enum("Login", "Check Deposit", "Paper Collection")
+  status_message text
+  // Following is common for all tables
+  createdBy int [ref: > Users.id]
+  created_at datetime
+  updated_at datetime
+}
+
+Table Companies {
+  id int [pk, increment] // Primary key
+  company_name varchar
+  emails varchar
+  fee_tsr decimal(10, 2)
+  fee_vr decimal(10, 2)
+  fee_document decimal(10, 2)
+  fee_bt decimal(10, 2)
+  upload_format_tsr varchar
+  upload_format_document varchar
+  upload_format_vr varchar
+  upload_format_search varchar
+  upload_format_extrawork varchar
+}
+
+Table Branches {
+  id int [pk, increment] // Primary key
+  branch_name varchar
+  person_name varchar
+  address text
+  contact_number varchar
+  email varchar
+  // Following is common for all tables
+  createdBy int [ref: > Users.id]
+  created_at datetime
+  updated_at datetime
+}
+
+Table Users {
+  id int [pk, increment] // Primary key
+  name varchar
+  email varchar [unique]
+  password varchar
+  branches varchar
+  role enum("Admin", "Manager", "Staff")
+  // Following is common for all tables
+  created_at datetime
+  updated_at datetime
+}

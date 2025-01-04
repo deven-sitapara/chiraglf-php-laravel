@@ -2,23 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Branch extends Model
 {
 
-    protected $table;
-    protected $fillable;
+    use HasFactory;
 
-    public function __construct(array $attributes = [])
-    {
-        // parent::__construct($attributes);
+    protected $table = 'branches';
+    protected $fillable = ['branch_name', 'person_name', 'address', 'contact_number', 'email'];
 
-        $config = config('modelConfig.models.Branch');
-
-        $this->table = $config['table'];
-        $this->fillable = $config['fillable'];
-    }
+    // CREATE TABLE "branches" ("id" integer primary key autoincrement not null, "branch_name" varchar not null, "person_name" varchar not null, "address" text not null, "contact_number" varchar not null, "email" varchar not null, "created_at" datetime, "updated_at" datetime)
 
 
     public function users()

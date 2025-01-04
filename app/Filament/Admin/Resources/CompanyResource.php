@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\CompanyResource\Pages;
 use App\Filament\Admin\Resources\CompanyResource\RelationManagers;
 use App\Models\Company;
+use Exception;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -39,7 +40,38 @@ class CompanyResource extends Resource
     {
         return $table
             ->columns([
-                //
+                // add fields
+
+                Tables\Columns\TextColumn::make('name')->label('Company Name'),
+                Tables\Columns\TextColumn::make('emails')
+                    ->label('Emails')
+                    ->formatStateUsing(function ($state) {
+
+
+                        try {
+                            // Decode JSON to array
+                            $array = json_decode($state, true);
+
+                            // Check if decoding succeeded
+                            if ($array === null) {
+                                throw new Exception('Invalid JSON');
+                            }
+
+                            // Use Laravel collection to process
+                            return   collect($array)->implode(', ');
+                        } catch (Exception $e) {
+                            return 'Error: ' . $e->getMessage();
+                        }
+                    }),
+                Tables\Columns\TextColumn::make('tsr_fee')->label('TSR Fee'),
+                Tables\Columns\TextColumn::make('vr_fee')->label('VR Fee'),
+                Tables\Columns\TextColumn::make('document_fee')->label('Document Fee'),
+                Tables\Columns\TextColumn::make('bt_fee')->label('BT Fee'),
+                // Tables\Columns\TextColumn::make('created_at')->dateTime(),
+                // Tables\Columns\TextColumn::make('updated_at')->dateTime(),
+
+
+
             ])
             ->filters([
                 //
@@ -49,7 +81,7 @@ class CompanyResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    // Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

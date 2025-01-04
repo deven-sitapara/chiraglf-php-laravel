@@ -10,6 +10,8 @@ class ListBTS extends ListRecords
 {
     protected static string $resource = BTResource::class;
 
+    public static ?string $title = 'BTs';
+
     protected function getHeaderActions(): array
     {
         return [

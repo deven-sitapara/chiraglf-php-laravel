@@ -22,6 +22,7 @@ class VRResource extends Resource
     protected static ?string $navigationLabel = 'VRs';
     protected static ?string $slug = 'vrs';
     protected static ?string $breadcrumb = 'VRs';
+
     protected static ?string $navigationGroup = 'File';
 
 

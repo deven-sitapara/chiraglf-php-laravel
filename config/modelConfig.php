@@ -104,7 +104,7 @@ return [
         'Company' => [
             'navigation_sort' => 9,
             'table' => 'companies',
-            'fillable' => ['name', 'address', 'contact_number', 'email', 'person_name'],
+            'fillable' => ['name',  'emails',   'tsr_fee', 'vr_fee', 'document_fee', 'bt_fee'],
             'relationships' => [
                 'hasMany' => [],
                 'belongsTo' => [],

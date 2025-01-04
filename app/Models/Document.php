@@ -2,23 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Document extends Model
 {
 
-    protected $table;
-    protected $fillable;
+    use HasFactory;
 
-    public function __construct(array $attributes = [])
-    {
-        // parent::__construct($attributes);
+    protected $table = 'documents';
+    protected $fillable = ['document_number', 'file_id', 'date', 'type', 'executing_party_name', 'executing_party_mobile', 'contact_person', 'contact_person_mobile'];
 
-        $config = config('modelConfig.models.Document');
-
-        $this->table = $config['table'];
-        $this->fillable = $config['fillable'];
-    }
+    // CREATE TABLE "documents" ("id" integer primary key autoincrement not null, "document_number" varchar not null, "file_id" integer not null, "date" date not null, "type" varchar check ("type" in ('MOD', 'Release Deed', 'Sale Deed', 'Declaration Deed', 'Rectification Deed', 'Other Documents')) not null, "executing_party_name" varchar not null, "executing_party_mobile" varchar not null, "contact_person" varchar not null, "contact_person_mobile" varchar not null, "created_at" datetime, "updated_at" datetime, foreign key("file_id") references "files"("id") on delete cascade)
 
     // belongs to file
     public function file()

@@ -2,23 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class BT extends Model
 {
 
-    protected $table;
-    protected $fillable;
+    use HasFactory;
 
-    public function __construct(array $attributes = [])
-    {
-        // parent::__construct($attributes);
+    protected $table = 'bts';
+    protected $fillable = ['file_id', 'bt_number', 'date', 'status', 'status_message'];
 
-        $config = config('modelConfig.models.BT');
+    //CREATE TABLE "bts" ("id" integer primary key autoincrement not null, "file_id" integer not null, "bt_number" varchar not null, "date" date not null, "status" varchar check ("status" in ('Login', 'Check Deposit', 'Paper Collection')) not null, "status_message" varchar, "created_at" datetime, "updated_at" datetime, foreign key("file_id") references "files"("id") on delete cascade)
 
-        $this->table = $config['table'];
-        $this->fillable = $config['fillable'];
-    }
 
     // belongs to file
     public function file()
