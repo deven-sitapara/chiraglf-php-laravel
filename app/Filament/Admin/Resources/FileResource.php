@@ -178,7 +178,7 @@ class FileResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\TSRsRelationManager::class,
         ];
     }
 
@@ -188,6 +188,8 @@ class FileResource extends Resource
             'index' => Pages\ListFiles::route('/'),
             'create' => Pages\CreateFile::route('/create'),
             'edit' => Pages\EditFile::route('/{record}/edit'),
+            'view' => Pages\ViewFile::route('/{record}'),
+
         ];
     }
 }
