@@ -48,7 +48,7 @@ class BranchResource extends Resource
                 TextColumn::make('person_name')->sortable()->searchable(),
                 TextColumn::make('contact_number')->label('Contact'),
                 TextColumn::make('email'),
-                TextColumn::make('created_at')->dateTime()->label('Created At'),
+                // TextColumn::make('created_at')->dateTime()->label('Created At'),
             ])
             ->filters([
                 Tables\Filters\Filter::make('branch_name')->label('Branch Name'),

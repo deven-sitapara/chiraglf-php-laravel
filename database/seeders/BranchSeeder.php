@@ -14,7 +14,8 @@ class BranchSeeder extends Seeder
         // Branch::factory()->count(5)->create();
 
         $this->command->warn(PHP_EOL . 'Creating Branches...');
-        $user =   Branch::factory(5)->make();
+        Branch::factory(5)->create();
+
         $this->command->info('Branches created.');
     }
 }
