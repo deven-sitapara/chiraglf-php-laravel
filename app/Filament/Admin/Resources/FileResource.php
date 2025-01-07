@@ -75,8 +75,12 @@ class FileResource extends Resource
 
     public static function table(Table $table): Table
     {
+
+
         return $table
             ->defaultSort('created_at', 'desc')
+
+
             ->columns([
                 Tables\Columns\TextColumn::make('file_number')
                     ->label('File No.')
@@ -85,6 +89,7 @@ class FileResource extends Resource
                     ->copyable()
                     ->copyMessage('File number copied')
                     ->copyMessageDuration(1500),
+
                 Tables\Columns\TextColumn::make('branch.branch_name')
                     ->searchable()
                     ->sortable(),
@@ -95,6 +100,19 @@ class FileResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('borrower_name')
+                    ->label('Borrower')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('proposed_owner_name')
+                    ->label('Owner')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('property_descriptions')
+                    ->label('Address')
+                    ->words(5)
+                    ->tooltip(function ($record): string {
+                        return $record->property_descriptions;
+                    })
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
@@ -106,6 +124,7 @@ class FileResource extends Resource
                         'handover' => 'success',
                         'close' => 'danger',
                     })
+                    ->tooltip(fn($record): ?string => $record->status_message)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -145,6 +164,9 @@ class FileResource extends Resource
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
                 ])
+                    ->label('Actions')
+                    ->size(ActionSize::Small),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class File extends Model
 {
@@ -57,7 +58,7 @@ class File extends Model
     }
 
     //has many tsrs
-    public function tsrs()
+    public function tsrs(): HasMany
     {
         return $this->hasMany(TSR::class);
     }
