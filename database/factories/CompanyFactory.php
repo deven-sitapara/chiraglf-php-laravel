@@ -20,6 +20,11 @@ class CompanyFactory extends Factory
             'vr_fee' => $this->faker->numberBetween(0, 5000),
             'document_fee' => $this->faker->numberBetween(0, 5000),
             'bt_fee' => $this->faker->numberBetween(0, 5000),
+            'tsr_file_format' => '',
+            'document_file_format' => '',
+            'vr_file_format' => '',
+            'search_file_format' => '',
+            'ew_file_format' => '',
         ];
     }
 }

@@ -16,7 +16,7 @@ class BranchFactory extends Factory
         //        ['branch_name', 'person_name', 'address', 'contact_number', 'email',]
         // CREATE TABLE "branches" ("id" integer primary key autoincrement not null, "branch_name" varchar not null, "person_name" varchar not null, "address" text not null, "contact_number" varchar not null, "email" varchar not null, "created_at" datetime, "updated_at" datetime)
         return [
-            'branch_name' => $this->faker->randomElement($cities),
+            'branch_name' => $this->faker->randomElement($cities)->uniqid(),
             'person_name' => $this->faker->name,
             'address' => $this->faker->address,
             'contact_number' => $this->faker->phoneNumber,

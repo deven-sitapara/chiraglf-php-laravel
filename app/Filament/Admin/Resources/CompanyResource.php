@@ -3,16 +3,12 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\CompanyResource\Pages;
-use App\Filament\Admin\Resources\CompanyResource\RelationManagers;
 use App\Models\Company;
-use Exception;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CompanyResource extends Resource
 {
@@ -28,11 +24,53 @@ class CompanyResource extends Resource
     }
 
 
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 //
+                Forms\Components\TextInput::make('name')
+                    ->label('Company Name')
+                    ->required()
+                    ->maxLength(255),
+                //multiple emails
+                Forms\Components\Repeater::make('emails')
+                    ->label('Emails')
+                    ->schema([
+                        Forms\Components\TextInput::make('email')
+                            ->email()
+                            ->unique()
+                            ->required()
+                            ->maxLength(255),
+                    ])
+                    ->minItems(1)
+                    ->maxItems(10)
+                    ->required(), // Ensure the emails field is required
+                Forms\Components\TextInput::make('tsr_fee')->label('TSR Fee')->required()->numeric()->maxLength(5),
+                Forms\Components\TextInput::make('vr_fee')->label('VR Fee')->required()->numeric()->maxLength(5),
+                Forms\Components\TextInput::make('document_fee')->label('Document Fee')->required()->numeric()->maxLength(5),
+                Forms\Components\TextInput::make('bt_fee')->label('BT Fee')->required()->numeric()->maxLength(5),
+
+
+
+
+                Forms\Components\FileUpload::make('tsr_file_format')
+                    ->label('TSR File')
+                    ->nullable(),
+                Forms\Components\FileUpload::make('document_file_format')
+                    ->label('Document File')
+                    ->nullable(),
+                Forms\Components\FileUpload::make('vr_file_format')
+                    ->label('VR File')
+                    ->nullable(),
+                Forms\Components\FileUpload::make('search_file_format')
+                    ->label('Search File')
+                    ->nullable(),
+                Forms\Components\FileUpload::make('ew_file_format')
+                    ->label('Extra Work File')
+                    ->nullable(),
+
             ]);
     }
 
@@ -47,18 +85,23 @@ class CompanyResource extends Resource
                     ->label('Emails')
                     ->formatStateUsing(function ($state) {
 
+                        $json = '[' . $state . ']';
 
                         try {
                             // Decode JSON to array
-                            $array = json_decode($state, true);
+                            $array = json_decode($json, true);
 
                             // Check if decoding succeeded
                             if ($array === null) {
-                                throw new Exception('Invalid JSON');
+                                // throw new Exception('Invalid JSON');
                             }
 
                             // Use Laravel collection to process
-                            return   collect($array)->implode(', ');
+                            return $commaSeparated = collect($array)
+                                ->pluck('email') // Extract 'email' values
+                                ->implode(',');  // Convert to comma-separated string
+
+                            return $commaSeparated; // Output: test@test.com,dev@dev.com
                         } catch (Exception $e) {
                             return 'Error: ' . $e->getMessage();
                         }

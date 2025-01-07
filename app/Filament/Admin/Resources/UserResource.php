@@ -22,6 +22,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
 {
@@ -43,7 +44,15 @@ class UserResource extends Resource
             ->schema([
                 TextInput::make('name')->required(),
                 TextInput::make('email')->email()->required(),
-                TextInput::make('password')->password(),
+                TextInput::make('password')
+                    ->password()
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->same('passwordConfirmation'),
+                TextInput::make('passwordConfirmation')
+                    ->password()
+                    ->dehydrated(false)
+                    ->required(fn (string $operation): bool => $operation === 'create'),
                 Select::make('branch_id')
                     ->relationship('branch', 'branch_name')
                     ->nullable()
@@ -57,6 +66,17 @@ class UserResource extends Resource
                     ->default('Staff')
                     ->required(),
             ]);
+    }
+
+    public static function mutateFormDataBeforeSave(array $data): array
+    {
+        if (!empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+        return $data;
     }
 
     public static function table(Table $table): Table
