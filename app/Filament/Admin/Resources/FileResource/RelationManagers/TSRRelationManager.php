@@ -2,7 +2,9 @@
 
 namespace App\Filament\Admin\Resources\FileResource\RelationManagers;
 
+use App\Filament\Admin\Resources\TSRResource\Pages\ListTSRS;
 use App\Models\TSR;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -33,7 +35,9 @@ class TSRsRelationManager extends RelationManager
                 TextInput::make('tsr_number')
                     ->disabled()
                     ->default(fn() => '#file-TS-' . now()->timestamp),
-                DatePicker::make('date')->required(),
+                DatePicker::make('date')
+                    ->required()
+                    ->default(now()),
             ]);
     }
 
@@ -58,4 +62,16 @@ class TSRsRelationManager extends RelationManager
                 ]),
             ]);
     }
+
+    // public static function getPages(): array
+    // {
+    //     return [
+    //         'index' => ListTSRS::route('/'),
+    //         'create' =>  ListTSRS::route('/create'),
+    //         'edit' =>  ListTSRS::route('/{record}/edit'),
+    //         'view' =>  ListTSRS::route('/{record}'),
+    //         // 'create-trs' => '',
+
+    //     ];
+    // }
 }
