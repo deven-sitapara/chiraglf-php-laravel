@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TSR extends Model
 {
@@ -24,19 +23,20 @@ class TSR extends Model
     ];
 
 
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
-
         static::creating(function ($tsr) {
             if (!$tsr->tsr_number) {
-                $tsr->tsr_number = '' . $tsr->file_id . '-TS-' . (static::count() + 1);
+                $tsr->tsr_number = $tsr->file_id . '-TS-' . (TSR::where('file_id', $tsr->file_id)?->count() + 1);
             }
         });
     }
 
-    public function file(): BelongsTo
+    //belongs to file
+    public function file()
     {
         return $this->belongsTo(File::class);
     }
+
 }

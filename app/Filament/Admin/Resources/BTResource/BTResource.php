@@ -1,30 +1,31 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\Admin\Resources\BTResource;
 
-use App\Filament\Admin\Resources\ExtraWorkResource\Pages;
-use App\Filament\Admin\Resources\ExtraWorkResource\RelationManagers;
-use App\Models\ExtraWork;
-use Filament\Forms;
+use App\Models\BT;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ExtraWorkResource extends Resource
+class BTResource extends Resource
 {
-    protected static ?string $model = ExtraWork::class;
+    protected static ?string $model = BT::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+
+    protected static ?string $navigationLabel = 'BTs';
+    protected static ?string $slug = 'bts';
+    protected static ?string $breadcrumb = 'BTs';
     protected static ?string $navigationGroup = 'File';
+
 
     public static function getNavigationSort(): ?int
     {
         // get from config
-        return config('modelConfig.models.ExtraWork.navigation_sort');
+        return config('modelConfig.models.BT.navigation_sort');
     }
-
 
     public static function form(Form $form): Form
     {
@@ -63,9 +64,9 @@ class ExtraWorkResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListExtraWorks::route('/'),
-            'create' => Pages\CreateExtraWork::route('/create'),
-            'edit' => Pages\EditExtraWork::route('/{record}/edit'),
+            'index' => Pages\ListBTS::route('/'),
+            'create' => Pages\CreateBT::route('/create'),
+            'edit' => Pages\EditBT::route('/{record}/edit'),
         ];
     }
 }

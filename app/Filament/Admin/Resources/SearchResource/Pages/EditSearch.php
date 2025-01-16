@@ -2,8 +2,8 @@
 
 namespace App\Filament\Admin\Resources\SearchResource\Pages;
 
-use App\Filament\Admin\Resources\SearchResource;
-use App\Filament\Traits\RedirectsToListingPage;
+use App\Filament\Admin\Resources\SearchResource\SearchResource;
+use App\Filament\Admin\Traits\RedirectsToListingPage;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

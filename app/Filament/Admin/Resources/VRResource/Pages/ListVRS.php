@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources\VRResource\Pages;
 
-use App\Filament\Admin\Resources\VRResource;
+use App\Filament\Admin\Resources\VRResource\VRResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

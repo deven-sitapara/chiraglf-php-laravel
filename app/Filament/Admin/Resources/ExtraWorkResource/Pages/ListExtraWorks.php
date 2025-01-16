@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources\ExtraWorkResource\Pages;
 
-use App\Filament\Admin\Resources\ExtraWorkResource;
+use App\Filament\Admin\Resources\ExtraWorkResource\ExtraWorkResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

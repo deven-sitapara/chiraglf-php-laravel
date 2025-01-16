@@ -1,17 +1,12 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\Admin\Resources\VRResource;
 
-use App\Filament\Admin\Resources\VRResource\Pages;
-use App\Filament\Admin\Resources\VRResource\RelationManagers;
 use App\Models\VR;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class VRResource extends Resource
 {

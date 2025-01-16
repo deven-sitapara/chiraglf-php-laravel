@@ -2,9 +2,8 @@
 
 namespace App\Filament\Admin\Resources\VRResource\Pages;
 
-use App\Filament\Admin\Resources\VRResource;
-use App\Filament\Traits\RedirectsToListingPage;
-use Filament\Actions;
+use App\Filament\Admin\Resources\VRResource\VRResource;
+use App\Filament\Admin\Traits\RedirectsToListingPage;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateVR extends CreateRecord

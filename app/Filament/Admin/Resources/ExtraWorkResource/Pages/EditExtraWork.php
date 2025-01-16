@@ -2,8 +2,8 @@
 
 namespace App\Filament\Admin\Resources\ExtraWorkResource\Pages;
 
-use App\Filament\Admin\Resources\ExtraWorkResource;
-use App\Filament\Traits\RedirectsToListingPage;
+use App\Filament\Admin\Resources\ExtraWorkResource\ExtraWorkResource;
+use App\Filament\Admin\Traits\RedirectsToListingPage;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

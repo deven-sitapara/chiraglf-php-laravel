@@ -1,21 +1,24 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\Admin\Resources\FileResource;
 
-use App\Filament\Admin\Resources\FileResource\Pages;
-use App\Filament\Admin\Resources\FileResource\RelationManagers;
 use App\Filament\Admin\Resources\FileResource\Actions\EmailAction;
 use App\Filament\Admin\Resources\FileResource\Actions\HandoverAction;
+use App\Filament\Admin\Resources\FileResource\RelationManagers\BTRelationManager;
+use App\Filament\Admin\Resources\FileResource\RelationManagers\DocumentRelationManager;
+use App\Filament\Admin\Resources\FileResource\RelationManagers\ExtraWorkRelationManager;
+use App\Filament\Admin\Resources\FileResource\RelationManagers\SearchRelationManager;
+use App\Filament\Admin\Resources\FileResource\RelationManagers\TSRRelationManager;
+use App\Filament\Admin\Resources\FileResource\RelationManagers\VRRelationManager;
 use App\Models\File;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Tables\Actions\ActionGroup;
 
 class FileResource extends Resource
 {
@@ -75,21 +78,25 @@ class FileResource extends Resource
 
     public static function table(Table $table): Table
     {
-
-
         return $table
             ->defaultSort('created_at', 'desc')
-
-
             ->columns([
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'login' => 'gray',
+                        'queries' => 'warning',
+                        'update' => 'info',
+                        'handover' => 'success',
+                        'close' => 'danger',
+                    })
+                    ->tooltip(fn($record): ?string => $record->status_message)
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('file_number')
                     ->label('File No.')
                     ->searchable()
                     ->sortable()
-                    ->copyable()
-                    ->copyMessage('File number copied')
-                    ->copyMessageDuration(1500),
-
+       ,
                 Tables\Columns\TextColumn::make('branch.branch_name')
                     ->searchable()
                     ->sortable(),
@@ -110,22 +117,13 @@ class FileResource extends Resource
                 Tables\Columns\TextColumn::make('property_descriptions')
                     ->label('Address')
                     ->words(5)
+                    ->wrap(true)
                     ->tooltip(function ($record): string {
                         return $record->property_descriptions;
                     })
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'login' => 'gray',
-                        'queries' => 'warning',
-                        'update' => 'info',
-                        'handover' => 'success',
-                        'close' => 'danger',
-                    })
-                    ->tooltip(fn($record): ?string => $record->status_message)
-                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -163,6 +161,13 @@ class FileResource extends Resource
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
+                    Tables\Actions\Action::make('tsr')
+                        ->icon('heroicon-o-document')
+                        ->label('Open TSR')
+                        ->action(function ($record, ) {
+                            redirect("/tsr");
+                        }),
+
                 ])
                     ->label('Actions')
                     ->size(ActionSize::Small),
@@ -178,7 +183,13 @@ class FileResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\TSRsRelationManager::class,
+            TSRRelationManager::class,
+            DocumentRelationManager::class,
+            SearchRelationManager::class,
+            ExtraWorkRelationManager::class,
+            BTRelationManager::class,
+            VRRelationManager::class,
+
         ];
     }
 
@@ -189,6 +200,7 @@ class FileResource extends Resource
             'create' => Pages\CreateFile::route('/create'),
             'edit' => Pages\EditFile::route('/{record}/edit'),
             'view' => Pages\ViewFile::route('/{record}'),
+//            'tsr' => Pages\ViewFile::route('/{record}/tsr'),
 
         ];
     }

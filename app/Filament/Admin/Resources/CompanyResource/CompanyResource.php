@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\Admin\Resources\CompanyResource;
 
-use App\Filament\Admin\Resources\CompanyResource\Pages;
+use App\Filament\Admin\Resources\Exception;
 use App\Models\Company;
 use Filament\Forms;
 use Filament\Forms\Form;

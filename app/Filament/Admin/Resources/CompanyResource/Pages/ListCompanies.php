@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources\CompanyResource\Pages;
 
-use App\Filament\Admin\Resources\CompanyResource;
+use App\Filament\Admin\Resources\CompanyResource\CompanyResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

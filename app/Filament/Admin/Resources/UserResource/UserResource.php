@@ -1,27 +1,19 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\Admin\Resources\UserResource;
 
-use App\Filament\Admin\Resources\UserResource\Pages;
 use App\Filament\Admin\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Filament\Admin\Resources\UserResource\Pages\ListUsers;
-use App\Filament\Admin\Resources\UserResource\RelationManagers;
 use App\Models\User;
-use Filament\Actions\EditAction;
-use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource

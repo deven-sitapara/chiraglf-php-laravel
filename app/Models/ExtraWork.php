@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ExtraWork extends Model
 {
@@ -16,7 +17,7 @@ class ExtraWork extends Model
     // CREATE TABLE "extra_works" ("id" integer primary key autoincrement not null, "file_id" integer not null, "ew_number" varchar not null, "date" date not null, "customer_contact" varchar not null, "email" varchar not null, "work_details" text not null, "total_amount" numeric not null, "received_amount" numeric not null, "created_at" datetime, "updated_at" datetime, foreign key("file_id") references "files"("id") on delete cascade)
 
     // belongs to file
-    public function file()
+    public function file(): BelongsTo
     {
         return $this->belongsTo(File::class);
     }

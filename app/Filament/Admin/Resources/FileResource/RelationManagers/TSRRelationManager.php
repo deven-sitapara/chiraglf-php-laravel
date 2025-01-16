@@ -2,7 +2,11 @@
 
 namespace App\Filament\Admin\Resources\FileResource\RelationManagers;
 
+use App\Filament\Admin\Resources\FileResource\Actions\EditAction;
+use App\Filament\Admin\Resources\TSRResource\Pages\EditTSR;
 use App\Filament\Admin\Resources\TSRResource\Pages\ListTSRS;
+use App\Filament\Admin\Resources\TSRResource\TSRResource;
+use App\Models\Deployment;
 use App\Models\TSR;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -14,31 +18,18 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\View\ComponentAttributeBag;
 
-class TSRsRelationManager extends RelationManager
+class TSRRelationManager extends RelationManager
 {
     protected static string $relationship = 'tsrs';
 
-
-
-
-
+    protected static ?string $title = 'TSRs';  // More descriptive alternative
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Select::make('file_id')
-                    ->relationship('file', 'file_number')
-                    ->label('File Number')
-                    ->required(),
-                TextInput::make('tsr_number')
-                    ->disabled()
-                    ->default(fn() => '#file-TS-' . now()->timestamp),
-                DatePicker::make('date')
-                    ->required()
-                    ->default(now()),
-            ]);
+        return TSRResource::common_form( $form,'has_parent');
     }
 
     public function table(Table $table): Table
@@ -49,29 +40,21 @@ class TSRsRelationManager extends RelationManager
                 TextColumn::make('tsr_number')->label('TSR Number'),
                 TextColumn::make('date')->date(),
             ])
-            ->filters([
-                SelectFilter::make('file_id')
-                    ->relationship('file', 'file_number'),
+             ->actions([
+                 Tables\Actions\EditAction::make(),
+                 Tables\Actions\DeleteAction::make(),
+             ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make()->label('New TSR')
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
+            ->emptyStateHeading('No TSR yet')
+            ->emptyStateDescription('Once you create your first TSR, it will appear here.')
+             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
 
-    // public static function getPages(): array
-    // {
-    //     return [
-    //         'index' => ListTSRS::route('/'),
-    //         'create' =>  ListTSRS::route('/create'),
-    //         'edit' =>  ListTSRS::route('/{record}/edit'),
-    //         'view' =>  ListTSRS::route('/{record}'),
-    //         // 'create-trs' => '',
 
-    //     ];
-    // }
 }

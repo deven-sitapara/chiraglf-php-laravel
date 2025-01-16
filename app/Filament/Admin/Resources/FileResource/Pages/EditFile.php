@@ -2,8 +2,8 @@
 
 namespace App\Filament\Admin\Resources\FileResource\Pages;
 
-use App\Filament\Admin\Resources\FileResource;
-use App\Filament\Traits\RedirectsToListingPage;
+use App\Filament\Admin\Resources\FileResource\FileResource;
+use App\Filament\Admin\Traits\RedirectsToListingPage;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -16,7 +16,7 @@ class EditFile extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+//            Actions\DeleteAction::make(),
         ];
     }
 }

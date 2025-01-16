@@ -2,9 +2,8 @@
 
 namespace App\Filament\Admin\Resources\CompanyResource\Pages;
 
-use App\Filament\Admin\Resources\CompanyResource;
-use App\Filament\Traits\RedirectsToListingPage;
-use Filament\Actions;
+use App\Filament\Admin\Resources\CompanyResource\CompanyResource;
+use App\Filament\Admin\Traits\RedirectsToListingPage;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateCompany extends CreateRecord

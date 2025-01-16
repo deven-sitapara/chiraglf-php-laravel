@@ -2,8 +2,7 @@
 
 namespace App\Filament\Admin\Resources\BTResource\Pages;
 
-use App\Filament\Admin\Resources\BTResource;
-use Filament\Actions;
+use App\Filament\Admin\Resources\BTResource\BTResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateBT extends CreateRecord

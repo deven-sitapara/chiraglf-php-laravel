@@ -1,28 +1,23 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\Admin\Resources\ExtraWorkResource;
 
-use App\Filament\Admin\Resources\DocumentResource\Pages;
-use App\Filament\Admin\Resources\DocumentResource\RelationManagers;
-use App\Models\Document;
-use Filament\Forms;
+use App\Models\ExtraWork;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class DocumentResource extends Resource
+class ExtraWorkResource extends Resource
 {
-    protected static ?string $model = Document::class;
+    protected static ?string $model = ExtraWork::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'File';
 
     public static function getNavigationSort(): ?int
     {
         // get from config
-        return config('modelConfig.models.Document.navigation_sort');
+        return config('modelConfig.models.ExtraWork.navigation_sort');
     }
 
 
@@ -63,9 +58,9 @@ class DocumentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDocuments::route('/'),
-            'create' => Pages\CreateDocument::route('/create'),
-            'edit' => Pages\EditDocument::route('/{record}/edit'),
+            'index' => Pages\ListExtraWorks::route('/'),
+            'create' => Pages\CreateExtraWork::route('/create'),
+            'edit' => Pages\EditExtraWork::route('/{record}/edit'),
         ];
     }
 }

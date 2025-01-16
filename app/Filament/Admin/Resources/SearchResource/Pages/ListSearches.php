@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources\SearchResource\Pages;
 
-use App\Filament\Admin\Resources\SearchResource;
+use App\Filament\Admin\Resources\SearchResource\SearchResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

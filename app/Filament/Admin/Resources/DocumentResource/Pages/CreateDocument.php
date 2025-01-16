@@ -2,9 +2,8 @@
 
 namespace App\Filament\Admin\Resources\DocumentResource\Pages;
 
-use App\Filament\Admin\Resources\DocumentResource;
-use App\Filament\Traits\RedirectsToListingPage;
-use Filament\Actions;
+use App\Filament\Admin\Resources\DocumentResource\DocumentResource;
+use App\Filament\Admin\Traits\RedirectsToListingPage;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateDocument extends CreateRecord

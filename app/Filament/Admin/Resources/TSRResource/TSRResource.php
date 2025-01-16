@@ -1,22 +1,19 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\Admin\Resources\TSRResource;
 
-use App\Filament\Admin\Resources\TSRResource\Pages;
-use App\Filament\Admin\Resources\TSRResource\RelationManagers;
 use App\Models\TSR;
-use Filament\Forms;
+use Filament\Actions\CreateAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TSRResource extends Resource
 {
@@ -36,34 +33,59 @@ class TSRResource extends Resource
         return config('modelConfig.models.TSR.navigation_sort');
     }
 
-
-
     public static function form(Form $form): Form
     {
-        return $form
+        return self::common_form($form);
+    }
+
+    public static function common_form(Form $form, String $action = null){
+
+         return $form
             ->schema([
-                Select::make('file_id')
-                    ->relationship('file', 'file_number')
-                    ->label('File Number')
-                    ->required(),
+                self::getFileIdField( $action !== 'has_parent'),
                 TextInput::make('tsr_number')
-                    ->disabled()
-                    ->default(fn() => '#file-TS-' . now()->timestamp),
-                DatePicker::make('date')->required(),
+                    ->disabled(),
+                DatePicker::make('date')
+                    ->required()
+                    ->default(now()),
             ]);
+    }
+
+    public static function getFileIdField(bool $disabled = false){
+
+        if($disabled){
+            // allow file selection
+            return Select::make('file_id')
+                ->relationship('file', 'file_number')
+                ->label('File Number')
+                ->required();
+        }
+
+        // dont allow file selection
+        return Select::make('file_id')
+            ->relationship('file', 'file_number')
+            ->label('File Number')
+                ->default(function (RelationManager $livewire  ) {
+                    return $livewire->getOwnerRecord()->hasAttribute('id') ?  $livewire->getOwnerRecord()->getAttribute('id') : null;
+                })
+                ->disabled()
+            ->required();
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('file.file_number')->label('File Number'),
+                TextColumn::make('file.id')->label('File Number'),
                 TextColumn::make('tsr_number')->label('TSR Number'),
                 TextColumn::make('date')->date(),
             ])
             ->filters([
                 SelectFilter::make('file_id')
                     ->relationship('file', 'file_number'),
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make()->label('New TSR')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -86,7 +108,7 @@ class TSRResource extends Resource
     {
         return [
             'index' => Pages\ListTSRS::route('/'),
-            'create' => Pages\CreateTSR::route('/create'),
+//            'create' => Pages\CreateTSR::route('/create'),
             'edit' => Pages\EditTSR::route('/{record}/edit'),
         ];
     }

@@ -63,23 +63,28 @@ class File extends Model
         return $this->hasMany(TSR::class);
     }
     //has many vrs
-    public function vrs()
+    public function vrs() : HasMany
     {
         return $this->hasMany(VR::class);
     }
     //has many searches
-    public function searches()
+    public function searches() : HasMany
     {
         return $this->hasMany(Search::class);
     }
     //has many extra works
-    public function extraWorks()
+    public function extra_works() : HasMany
     {
         return $this->hasMany(ExtraWork::class);
     }
     // has many documents
-    public function documents()
+    public function documents() : HasMany
     {
         return $this->hasMany(Document::class);
+    }
+
+    public function bts() : HasMany
+    {
+        return $this->hasMany(BT::class);
     }
 }
