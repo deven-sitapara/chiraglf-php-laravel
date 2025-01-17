@@ -21,4 +21,15 @@ class Document extends Model
     {
         return $this->belongsTo(File::class);
     }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+        static::creating(function ($document) {
+            if (!$document->document_number) {
+                $document->document_number = $document->file_id . '-DC-' . (Document::where('file_id', $document->file_id)?->count() + 1);
+            }
+        });
+    }
+
 }

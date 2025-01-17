@@ -12,7 +12,9 @@ use App\Filament\Admin\Resources\FileResource\RelationManagers\TSRRelationManage
 use App\Filament\Admin\Resources\FileResource\RelationManagers\VRRelationManager;
 use App\Models\File;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables;
@@ -79,7 +81,6 @@ class FileResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
@@ -157,8 +158,8 @@ class FileResource extends Resource
             ->actions([
                 ActionGroup::make([
                     EmailAction::make(),
-                    HandoverAction::make(),
-                    Tables\Actions\ViewAction::make(),
+//                    HandoverAction::make(),
+//                    Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\Action::make('tsr')
@@ -167,6 +168,15 @@ class FileResource extends Resource
                         ->action(function ($record, ) {
                             redirect("/tsr");
                         }),
+                    Tables\Actions\Action::make('handover')
+                        ->color('success')
+                        ->icon('heroicon-o-check-circle')
+                        ->requiresConfirmation()
+                        ->modalHeading('Handover File')
+                        ->modalDescription('Are you sure you want to handover this file?')
+                        ->action(function ($record) {
+                            $record->update(['status' => 'handover']);
+                        })
 
                 ])
                     ->label('Actions')
@@ -177,7 +187,9 @@ class FileResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('id', 'desc')
+            ->defaultPaginationPageOption(25);
     }
 
     public static function getRelations(): array
@@ -189,9 +201,34 @@ class FileResource extends Resource
             ExtraWorkRelationManager::class,
             BTRelationManager::class,
             VRRelationManager::class,
-
         ];
     }
+
+
+    public static function getFileIdField(bool $disabled = false){
+
+        if($disabled){
+
+            // dont allow file selection
+            return Select::make('file_id')
+                ->relationship('file', 'file_number')
+                ->label('File Number')
+                ->default(function (RelationManager $livewire  ) {
+                    return $livewire->getOwnerRecord()->hasAttribute('id') ?  $livewire->getOwnerRecord()->getAttribute('id') : null;
+                })
+                ->disabled()
+                ->required();
+
+        }
+
+        // allow file selection
+        return Select::make('file_id')
+            ->relationship('file', 'file_number')
+            ->label('File Number')
+            ->searchable(true)
+            ->required();
+    }
+
 
     public static function getPages(): array
     {
@@ -199,7 +236,7 @@ class FileResource extends Resource
             'index' => Pages\ListFiles::route('/'),
             'create' => Pages\CreateFile::route('/create'),
             'edit' => Pages\EditFile::route('/{record}/edit'),
-            'view' => Pages\ViewFile::route('/{record}'),
+//            'view' => Pages\ViewFile::route('/{record}'),
 //            'tsr' => Pages\ViewFile::route('/{record}/tsr'),
 
         ];

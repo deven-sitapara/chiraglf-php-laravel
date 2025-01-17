@@ -13,10 +13,4 @@ class EditSearch extends EditRecord
 
     protected static string $resource = SearchResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
-}
+ }

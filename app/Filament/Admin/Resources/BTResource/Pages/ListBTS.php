@@ -12,10 +12,4 @@ class ListBTS extends ListRecords
 
     public static ?string $title = 'BTs';
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\CreateAction::make(),
-        ];
-    }
-}
+ }

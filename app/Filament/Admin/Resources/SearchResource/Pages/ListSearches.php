@@ -10,10 +10,4 @@ class ListSearches extends ListRecords
 {
     protected static string $resource = SearchResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\CreateAction::make(),
-        ];
-    }
-}
+ }

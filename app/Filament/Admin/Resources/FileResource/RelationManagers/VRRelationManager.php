@@ -2,6 +2,8 @@
 
 namespace App\Filament\Admin\Resources\FileResource\RelationManagers;
 
+use App\Filament\Admin\Resources\FileResource\FileResource;
+use App\Filament\Admin\Resources\VRResource\VRResource;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -18,45 +20,15 @@ class VRRelationManager extends RelationManager
 {
     protected static string $relationship = 'vrs';
 
-    public function form(Form $form): Form
+    protected static ?string $title = 'VRs';
+
+    public function form(Form $form, bool $disableForeignKeys = false ): Form
     {
-        return $form
-            ->schema([
-                Select::make('file_id')
-                    ->relationship('file', 'file_number')
-                    ->label('File Number')
-                    ->required(),
-                TextInput::make('vr_number')
-                    ->disabled(),
-                DatePicker::make('date')
-                    ->required()
-                    ->default(now()),
-            ]);
+        return VRResource::form($form, true);
     }
 
     public function table(Table $table): Table
     {
-        return $table
-            ->recordTitleAttribute('VRs')
-            ->columns([
-                TextColumn::make('file.file_number')->label('File Number'),
-                TextColumn::make('vr_number')->label('VR Number'),
-                TextColumn::make('date')->date(),
-            ])
-            ->filters([
-                //
-            ])
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+        return VRResource::table($table);
     }
 }

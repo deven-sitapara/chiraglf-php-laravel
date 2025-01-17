@@ -40,7 +40,7 @@ class File extends Model
         parent::boot();
 
         static::creating(function ($file) {
-            $file->file_number = (int) str_pad($file->id ?? (static::max('id') + 1), 5, '0', STR_PAD_LEFT);
+            $file->file_number = (int) str_pad($file->id ?? (static::max('id') + 1), 5, '0', STR_PAD_LEFT); // remove in future
             $file->status = 'login';
         });
     }

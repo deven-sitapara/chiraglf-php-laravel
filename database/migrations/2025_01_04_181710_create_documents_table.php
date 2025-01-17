@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
             $table->string('document_number')->unique();
-            $table->foreignId('file_id')->constrained()->onDelete('cascade');
+            $table->foreignId('file_id')->constrained()->onDelete('cascade')->restrictOnUpdate();
             $table->date('date');
             $table->enum('type', ['MOD', 'Release Deed', 'Sale Deed', 'Declaration Deed', 'Rectification Deed', 'Other Documents']);
             $table->string('executing_party_name');

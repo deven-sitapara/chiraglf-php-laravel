@@ -10,10 +10,5 @@ class EditBT extends EditRecord
 {
     protected static string $resource = BTResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
+
 }

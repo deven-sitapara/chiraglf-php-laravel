@@ -13,10 +13,5 @@ class EditExtraWork extends EditRecord
 
     protected static string $resource = ExtraWorkResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
+
 }

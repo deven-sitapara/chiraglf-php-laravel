@@ -10,10 +10,5 @@ class ListExtraWorks extends ListRecords
 {
     protected static string $resource = ExtraWorkResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\CreateAction::make(),
-        ];
-    }
+
 }

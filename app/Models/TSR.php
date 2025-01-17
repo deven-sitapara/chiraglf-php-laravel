@@ -23,6 +23,7 @@ class TSR extends Model
     ];
 
 
+
     protected static function boot(): void
     {
         parent::boot();
