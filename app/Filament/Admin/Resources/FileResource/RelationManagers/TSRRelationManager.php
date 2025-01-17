@@ -2,26 +2,13 @@
 
 namespace App\Filament\Admin\Resources\FileResource\RelationManagers;
 
-use App\Filament\Admin\Resources\FileResource\Actions\EditAction;
-use App\Filament\Admin\Resources\TSRResource\Pages\EditTSR;
-use App\Filament\Admin\Resources\TSRResource\Pages\ListTSRS;
 use App\Filament\Admin\Resources\TSRResource\TSRResource;
-use App\Models\Deployment;
-use App\Models\TSR;
-use Filament\Actions\Action;
-use Filament\Actions\CreateAction;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\View\ComponentAttributeBag;
 
 class TSRRelationManager extends RelationManager
 {

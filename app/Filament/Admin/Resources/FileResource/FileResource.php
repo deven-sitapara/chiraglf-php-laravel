@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources\FileResource;
 
 use App\Filament\Admin\Resources\FileResource\Actions\EmailAction;
-use App\Filament\Admin\Resources\FileResource\Actions\HandoverAction;
 use App\Filament\Admin\Resources\FileResource\RelationManagers\BTRelationManager;
 use App\Filament\Admin\Resources\FileResource\RelationManagers\DocumentRelationManager;
 use App\Filament\Admin\Resources\FileResource\RelationManagers\ExtraWorkRelationManager;
@@ -158,8 +157,6 @@ class FileResource extends Resource
             ->actions([
                 ActionGroup::make([
                     EmailAction::make(),
-//                    HandoverAction::make(),
-//                    Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\Action::make('tsr')

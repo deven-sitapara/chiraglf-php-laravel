@@ -2,7 +2,6 @@
 
 namespace App\Filament\Admin\Resources\CompanyResource;
 
-use App\Filament\Admin\Resources\Exception;
 use App\Models\Company;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -93,16 +92,16 @@ class CompanyResource extends Resource
 
                             // Check if decoding succeeded
                             if ($array === null) {
+                                return null;
                                 // throw new Exception('Invalid JSON');
                             }
 
-                            // Use Laravel collection to process
+                            // Use Laravel collection to process // Output: test@test.com,dev@dev.com
                             return $commaSeparated = collect($array)
                                 ->pluck('email') // Extract 'email' values
                                 ->implode(',');  // Convert to comma-separated string
 
-                            return $commaSeparated; // Output: test@test.com,dev@dev.com
-                        } catch (Exception $e) {
+                        } catch (\Exception $e) {
                             return 'Error: ' . $e->getMessage();
                         }
                     }),

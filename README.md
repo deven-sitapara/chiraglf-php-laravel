@@ -1,4 +1,4 @@
-<p align="center"><a href="#" target="_blank"><img src="" width="400" alt="Law Firm ERP"></a></p>
+(<p align="center"><a href="#" target="_blank"><img src="./public/images/logo.svg" width="400" alt="Law Firm ERP" width="200"></a></p>)
 
 ## About Law Firm ERP
 
