@@ -16,12 +16,9 @@ class BranchResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
     protected static ?string $navigationGroup = 'Settings';
 
+    public static ?int $navigationSort = 8; // Adjust the number to set the order
 
-    public static function getNavigationSort(): ?int
-    {
-        // get from config
-        return config('modelConfig.models.Branch.navigation_sort');
-    }
+
 
     public static function form(Form $form): Form
     {

@@ -24,23 +24,19 @@ class VRResource extends Resource
     protected static ?string $breadcrumb = 'VRs';
 
     protected static ?string $navigationGroup = 'File';
-
-
-    public static function getNavigationSort(): ?int
-    {
-        // get from config
-        return config('modelConfig.models.VR.navigation_sort');
-    }
+    public static ?int $navigationSort = 7; // Adjust the number to set the order
 
 
 
 
-    public static function form(Form $form, bool $disableForeignKeys = false ): Form
+
+
+    public static function form(Form $form, bool $disableForeignKeys = false): Form
     {
         return $form
             ->schema([
 
-                FileResource::getFileIdField( $disableForeignKeys ),
+                FileResource::getFileIdField($disableForeignKeys),
                 TextInput::make('vr_number')
                     ->helperText('Auto generated after record saved')
                     ->disabled(),
@@ -66,11 +62,11 @@ class VRResource extends Resource
                 Tables\Actions\CreateAction::make()->label('New VR')->modelLabel('New VR')
             ])
             ->actions([
-//- New
-//- Edit
-//- Generate VR / Open
-//- Add Queries
-//- DS Report Upload
+                //- New
+                //- Edit
+                //- Generate VR / Open
+                //- Add Queries
+                //- DS Report Upload
                 Tables\Actions\ActionGroup::make([
 
                     Tables\Actions\Action::make('Generate VR')->label('Generate/Open VR'),
@@ -79,7 +75,7 @@ class VRResource extends Resource
                 ]),
 
                 Tables\Actions\EditAction::make(),
-//                Tables\Actions\DeleteAction::make(),
+                //                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -3,47 +3,45 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-//use Laravel\Fortify\TwoFactorAuthenticatable;
-//use Laravel\Jetstream\HasProfilePhoto;
-//use Laravel\Jetstream\HasTeams;
-//use Laravel\Sanctum\HasApiTokens;
-use Filament\Models\Contracts\FilamentUser;
-
 
 class User extends Authenticatable implements FilamentUser
 {
-    use  HasFactory;
-
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory;
-//    use HasProfilePhoto;
-//    use HasTeams;
-    use Notifiable;
-//    use TwoFactorAuthenticatable;
+    use HasFactory, Notifiable;
 
-
-    protected $table = 'users';
-    protected $fillable = ['name', 'email', 'password', 'branch_id', 'role'];
-
-    // CREATE TABLE "users" ("id" integer primary key autoincrement not null, "name" varchar not null, "email" varchar not null, "email_verified_at" datetime, "password" varchar not null, "remember_token" varchar, "current_team_id" integer, "profile_photo_path" varchar, "created_at" datetime, "updated_at" datetime, "two_factor_secret" text, "two_factor_recovery_codes" text, "two_factor_confirmed_at" datetime, "branch_id" integer, "role" varchar check ("role" in ('Admin', 'Manager', 'Staff')) not null default 'Staff', foreign key("branch_id") references "branches"("id") on delete set null)
-
-
-
-    protected $hidden = [
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    // protected $fillable = [
+    //     'name',
+    //     'email',
+    //     'password',
+    // ];
+    protected $fillable = [
+        'name',
+        'email',
         'password',
-        'remember_token',
-        'two_factor_recovery_codes',
-        'two_factor_secret',
+        'branch_id',
+        'role'
     ];
 
 
-    protected $appends = [
-        'profile_photo_url',
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
     ];
 
     /**
@@ -61,12 +59,11 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-//        return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
+        //        return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
         return true;
     }
 
-
-    public function branch(): BelongsTo
+    public function branch()
     {
         return $this->belongsTo(Branch::class);
     }

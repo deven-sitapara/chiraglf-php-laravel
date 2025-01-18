@@ -26,13 +26,9 @@ class TSRResource extends Resource
     protected static ?string $slug = 'tsrs';
     protected static ?string $breadcrumb = 'TSRs';
     protected static ?string $navigationGroup = 'File';
+    public static ?int $navigationSort = 2; // Adjust the number to set the order
 
 
-    public static function getNavigationSort(): ?int
-    {
-        // get from config
-        return config('modelConfig.models.TSR.navigation_sort');
-    }
 
     public static function form(Form $form): Form
     {
@@ -42,9 +38,9 @@ class TSRResource extends Resource
     public static function common_form(Form $form, bool $disableForeignKeys = false): Form
     {
 
-         return $form
+        return $form
             ->schema([
-                FileResource::getFileIdField( $disableForeignKeys ),
+                FileResource::getFileIdField($disableForeignKeys),
                 TextInput::make('tsr_number')
                     ->helperText('Auto generated after record saved')
                     ->disabled(),
@@ -64,10 +60,10 @@ class TSRResource extends Resource
                 TextColumn::make('tsr_number')->label('TSR Number'),
                 TextColumn::make('date')->date(),
             ])
-//            ->filters([
-//                SelectFilter::make('file_id')
-//                    ->relationship('file', 'file_number'),
-//            ])
+            //            ->filters([
+            //                SelectFilter::make('file_id')
+            //                    ->relationship('file', 'file_number'),
+            //            ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()->label('New TSR')
             ])
@@ -92,8 +88,8 @@ class TSRResource extends Resource
     {
         return [
             'index' => Pages\ListTSRS::route('/'),
-//            'create' => Pages\CreateTSR::route('/create'),
-//            'edit' => Pages\EditTSR::route('/{record}/edit'),
+            //            'create' => Pages\CreateTSR::route('/create'),
+            //            'edit' => Pages\EditTSR::route('/{record}/edit'),
         ];
     }
 }

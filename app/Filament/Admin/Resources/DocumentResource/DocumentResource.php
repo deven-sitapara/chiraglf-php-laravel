@@ -22,18 +22,14 @@ class DocumentResource extends Resource
     protected static ?string $model = Document::class;
     protected static ?string $navigationIcon = 'heroicon-s-clipboard-document';
     protected static ?string $navigationGroup = 'File';
+    public static ?int $navigationSort = 4; // Adjust the number to set the order
 
-    public static function getNavigationSort(): ?int
-    {
-        // get from config
-        return config('modelConfig.models.Document.navigation_sort');
-    }
 
 
     public static function form(Form $form, bool $disableForeignKeys = false): Form
     {
 
-//        Debugbar::info('record id' . print_r(request()->segments(),true));
+        //        Debugbar::info('record id' . print_r(request()->segments(),true));
 
         return $form
             ->schema([
@@ -65,7 +61,8 @@ class DocumentResource extends Resource
     }
 
 
-    public static function getTableColumns() : array{
+    public static function getTableColumns(): array
+    {
         return [
             TextColumn::make('file.id')->label('File Number'),
             TextColumn::make('document_number')->label('Document Number'),
@@ -76,7 +73,6 @@ class DocumentResource extends Resource
             TextColumn::make('contact_person'),
             TextColumn::make('contact_person_mobile')
         ];
-
     }
 
     public static function table(Table $table): Table
@@ -92,19 +88,19 @@ class DocumentResource extends Resource
 
                 Tables\Actions\ActionGroup::make(
                     [
-                    //- New
-                    //- Edit
-                    //- RR Upload
-                    //• Stamp Duty Upload
-                    //• Token File Upload
-                    //• Appointment File Upload
-                    //• ReAppointment File Upload
+                        //- New
+                        //- Edit
+                        //- RR Upload
+                        //• Stamp Duty Upload
+                        //• Token File Upload
+                        //• Appointment File Upload
+                        //• ReAppointment File Upload
 
-                    Tables\Actions\Action::make('rr_upload')->label('RR Upload'),
-                    Tables\Actions\Action::make('Stamp Duty Upload')->label('Stamp Duty Upload'),
-                    Tables\Actions\Action::make('Token File Upload')->label('Token File Upload'),
-                    Tables\Actions\Action::make('Appointment File Upload')->label('Appointment File Upload'),
-                    Tables\Actions\Action::make('ReAppointment File Upload')->label('ReAppointment File Upload'),
+                        Tables\Actions\Action::make('rr_upload')->label('RR Upload'),
+                        Tables\Actions\Action::make('Stamp Duty Upload')->label('Stamp Duty Upload'),
+                        Tables\Actions\Action::make('Token File Upload')->label('Token File Upload'),
+                        Tables\Actions\Action::make('Appointment File Upload')->label('Appointment File Upload'),
+                        Tables\Actions\Action::make('ReAppointment File Upload')->label('ReAppointment File Upload'),
 
                     ]
                 ),
@@ -132,8 +128,8 @@ class DocumentResource extends Resource
     {
         return [
             'index' => Pages\ListDocuments::route('/'),
-//            'create' => Pages\CreateDocument::route('/create'),
-//            'edit' => Pages\EditDocument::route('/{record}/edit'),
+            //            'create' => Pages\CreateDocument::route('/create'),
+            //            'edit' => Pages\EditDocument::route('/{record}/edit'),
         ];
     }
 }

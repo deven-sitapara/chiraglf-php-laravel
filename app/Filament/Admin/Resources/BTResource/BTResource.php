@@ -25,13 +25,9 @@ class BTResource extends Resource
     protected static ?string $slug = 'bts';
     protected static ?string $breadcrumb = 'BTs';
     protected static ?string $navigationGroup = 'File';
+    public static ?int $navigationSort = 6; // Adjust the number to set the order
 
 
-    public static function getNavigationSort(): ?int
-    {
-        // get from config
-        return config('modelConfig.models.BT.navigation_sort');
-    }
 
     public static function form(Form $form, bool $disableForeignKeys = false): Form
     {
@@ -51,22 +47,23 @@ class BTResource extends Resource
                         'Check Deposit' => 'Check Deposit',
                         'Paper Collection' => 'Paper Collection',
                     ]),
-                TextInput::make('status_message')            ]);
+                TextInput::make('status_message')
+            ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-//BT Number ( Auto Generate like #file-BT-1)
-//File Number  ( Foreign Key from File )
-//Date
-//Status (
-//- Login,
-//- Check Deposit,
-//- Paper Collection
-//)
-//Status Message
+                //BT Number ( Auto Generate like #file-BT-1)
+                //File Number  ( Foreign Key from File )
+                //Date
+                //Status (
+                //- Login,
+                //- Check Deposit,
+                //- Paper Collection
+                //)
+                //Status Message
 
                 TextColumn::make('file.id')->label('File Number'),
                 TextColumn::make('bt_number')->label('BT Number'),
@@ -112,8 +109,8 @@ class BTResource extends Resource
     {
         return [
             'index' => Pages\ListBTS::route('/'),
-//            'create' => Pages\CreateBT::route('/create'),
-//            'edit' => Pages\EditBT::route('/{record}/edit'),
+            //            'create' => Pages\CreateBT::route('/create'),
+            //            'edit' => Pages\EditBT::route('/{record}/edit'),
         ];
     }
 }

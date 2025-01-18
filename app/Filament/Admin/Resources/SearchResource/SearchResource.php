@@ -20,13 +20,9 @@ class SearchResource extends Resource
     protected static ?string $model = Search::class;
     protected static ?string $navigationIcon = 'heroicon-c-document-magnifying-glass';
     protected static ?string $navigationGroup = 'File';
+    public static ?int $navigationSort = 3; // Adjust the number to set the order
 
 
-    public static function getNavigationSort(): ?int
-    {
-        // get from config
-        return config('modelConfig.models.Search.navigation_sort');
-    }
 
 
 
@@ -42,28 +38,28 @@ class SearchResource extends Resource
                     ->required()
                     ->default(now()),
 
-                    TextInput::make('years_required')
-                        ->numeric()
-                        ->inputMode('decimal')
-                        ->required()
-                 ]);
+                TextInput::make('years_required')
+                    ->numeric()
+                    ->inputMode('decimal')
+                    ->required()
+            ]);
     }
 
-    public static function getTableColumns() : array{
+    public static function getTableColumns(): array
+    {
         return [
             TextColumn::make('file.id')->label('File Number'),
             TextColumn::make('search_number')->label('Search Number'),
             TextColumn::make('date'),
             TextColumn::make('years_required'),
         ];
-
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns(
-                    self::getTableColumns()
+                self::getTableColumns()
             )
             ->filters([
                 //
@@ -93,8 +89,8 @@ class SearchResource extends Resource
     {
         return [
             'index' => Pages\ListSearches::route('/'),
-//            'create' => Pages\CreateSearch::route('/create'),
-//            'edit' => Pages\EditSearch::route('/{record}/edit'),
+            //            'create' => Pages\CreateSearch::route('/create'),
+            //            'edit' => Pages\EditSearch::route('/{record}/edit'),
         ];
     }
 }

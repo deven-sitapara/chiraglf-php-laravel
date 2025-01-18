@@ -14,13 +14,10 @@ class CompanyResource extends Resource
     protected static ?string $model = Company::class;
     protected static ?string $navigationIcon = 'heroicon-c-building-library';
     protected static ?string $navigationGroup = 'Settings';
+    public static ?int $navigationSort = 9; // Adjust the number to set the order
 
 
-    public static function getNavigationSort(): ?int
-    {
-        // get from config
-        return config('modelConfig.models.Company.navigation_sort');
-    }
+
 
 
 

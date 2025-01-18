@@ -2,10 +2,12 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Admin\Resources\TSRResource\Pages\ListTSRS;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -32,11 +34,10 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->spa()
-             ->topbar(true)
-             ->navigation(true)
-             ->globalSearch(true)
-            ->topNavigation()
-            ->breadcrumbs(false)
+            // ->topbar(false)
+            // ->navigation(false)
+            // ->globalSearch(false)
+
             ->colors([
                 'primary' => Color::Emerald,
             ])
@@ -68,6 +69,20 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])->topNavigation()
+            ->breadcrumbs(false)
+
+            // add user menu items
+            ->userMenuItems([
+                // MenuItem::make()
+                //     ->label('Lock session')
+                //     ->postAction(fn(): string => route('lock-session')),
+                // MenuItem::make()
+                //     ->label('Settings')
+                //     ->url(fn(): string => ListTSRS::getUrl())
+                //     ->icon('heroicon-o-cog-6-tooth'),
+                // ...
+            ])
+        ;
     }
 }

@@ -12,9 +12,6 @@ class File extends Model
 
     protected $table = 'files';
 
-    protected static ?string $recordTitleAttribute = 'id';
-
-
     // CREATE TABLE "files" ("id" integer primary key autoincrement not null, "file_number" varchar not null, "date" date not null, "company_reference_number" varchar not null, "borrower_name" varchar not null, "proposed_owner_name" varchar not null, "property_descriptions" text not null, "status" varchar not null, "status_message" varchar, "created_at" datetime, "updated_at" datetime, "branch_id" integer not null, "company_id" integer not null, foreign key("branch_id") references "branches"("id"), foreign key("company_id") references "companies"("id"))
 
     protected $fillable = [

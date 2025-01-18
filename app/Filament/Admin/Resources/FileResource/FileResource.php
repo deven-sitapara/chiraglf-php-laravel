@@ -26,12 +26,9 @@ class FileResource extends Resource
     protected static ?string $model = File::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'File';
+    public static ?int $navigationSort = 1; // Adjust the number to set the order
 
-    public static function getNavigationSort(): ?int
-    {
-        // get from config
-        return config('modelConfig.models.File.navigation_sort');
-    }
+
 
     public static function form(Form $form): Form
     {
@@ -95,8 +92,7 @@ class FileResource extends Resource
                 Tables\Columns\TextColumn::make('file_number')
                     ->label('File No.')
                     ->searchable()
-                    ->sortable()
-       ,
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('branch.branch_name')
                     ->searchable()
                     ->sortable(),
@@ -202,20 +198,20 @@ class FileResource extends Resource
     }
 
 
-    public static function getFileIdField(bool $disabled = false){
+    public static function getFileIdField(bool $disabled = false)
+    {
 
-        if($disabled){
+        if ($disabled) {
 
             // dont allow file selection
             return Select::make('file_id')
                 ->relationship('file', 'file_number')
                 ->label('File Number')
-                ->default(function (RelationManager $livewire  ) {
+                ->default(function (RelationManager $livewire) {
                     return $livewire->getOwnerRecord()->hasAttribute('id') ?  $livewire->getOwnerRecord()->getAttribute('id') : null;
                 })
                 ->disabled()
                 ->required();
-
         }
 
         // allow file selection
@@ -233,8 +229,8 @@ class FileResource extends Resource
             'index' => Pages\ListFiles::route('/'),
             'create' => Pages\CreateFile::route('/create'),
             'edit' => Pages\EditFile::route('/{record}/edit'),
-//            'view' => Pages\ViewFile::route('/{record}'),
-//            'tsr' => Pages\ViewFile::route('/{record}/tsr'),
+            //            'view' => Pages\ViewFile::route('/{record}'),
+            //            'tsr' => Pages\ViewFile::route('/{record}/tsr'),
 
         ];
     }

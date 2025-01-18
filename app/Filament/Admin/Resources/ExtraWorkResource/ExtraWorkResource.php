@@ -20,15 +20,13 @@ class ExtraWorkResource extends Resource
     protected static ?string $model = ExtraWork::class;
     protected static ?string $navigationIcon = 'heroicon-m-document-plus';
     protected static ?string $navigationGroup = 'File';
+    public static ?int $navigationSort = 5; // Adjust the number to set the order
 
-    public static function getNavigationSort(): ?int
+
+
+
+    public static function getTableColumns(): array
     {
-        // get from config
-        return config('modelConfig.models.ExtraWork.navigation_sort');
-    }
-
-
-    public static function getTableColumns(): array {
         return [
             TextColumn::make('file.id')->label('File Number'),
             TextColumn::make('extra_work_number')->label('Extra Work Number'),
@@ -108,8 +106,8 @@ class ExtraWorkResource extends Resource
     {
         return [
             'index' => Pages\ListExtraWorks::route('/'),
-//            'create' => Pages\CreateExtraWork::route('/create'),
-//            'edit' => Pages\EditExtraWork::route('/{record}/edit'),
+            //            'create' => Pages\CreateExtraWork::route('/create'),
+            //            'edit' => Pages\EditExtraWork::route('/{record}/edit'),
         ];
     }
 }

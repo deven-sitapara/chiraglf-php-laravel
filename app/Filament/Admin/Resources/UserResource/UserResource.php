@@ -21,13 +21,9 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
     protected static ?string $navigationGroup = 'Settings';
+    public static ?int $navigationSort = 10; // Adjust the number to set the order
 
 
-    public static function getNavigationSort(): ?int
-    {
-        // get from config
-        return config('modelConfig.models.User.navigation_sort');
-    }
 
 
     public static function form(Form $form): Form
@@ -38,13 +34,13 @@ class UserResource extends Resource
                 TextInput::make('email')->email()->required(),
                 TextInput::make('password')
                     ->password()
-                    ->dehydrated(fn ($state) => filled($state))
-                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->dehydrated(fn($state) => filled($state))
+                    ->required(fn(string $operation): bool => $operation === 'create')
                     ->same('passwordConfirmation'),
                 TextInput::make('passwordConfirmation')
                     ->password()
                     ->dehydrated(false)
-                    ->required(fn (string $operation): bool => $operation === 'create'),
+                    ->required(fn(string $operation): bool => $operation === 'create'),
                 Select::make('branch_id')
                     ->relationship('branch', 'branch_name')
                     ->nullable()
