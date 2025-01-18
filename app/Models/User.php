@@ -3,24 +3,28 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Fortify\TwoFactorAuthenticatable;
-use Laravel\Jetstream\HasProfilePhoto;
-use Laravel\Jetstream\HasTeams;
-use Laravel\Sanctum\HasApiTokens;
+//use Laravel\Fortify\TwoFactorAuthenticatable;
+//use Laravel\Jetstream\HasProfilePhoto;
+//use Laravel\Jetstream\HasTeams;
+//use Laravel\Sanctum\HasApiTokens;
+use Filament\Models\Contracts\FilamentUser;
 
-class User extends Authenticatable
+
+class User extends Authenticatable implements FilamentUser
 {
-    use HasApiTokens, HasFactory;
+    use  HasFactory;
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
-    use HasProfilePhoto;
-    use HasTeams;
+//    use HasProfilePhoto;
+//    use HasTeams;
     use Notifiable;
-    use TwoFactorAuthenticatable;
+//    use TwoFactorAuthenticatable;
 
 
     protected $table = 'users';
@@ -55,7 +59,14 @@ class User extends Authenticatable
         ];
     }
 
-    public function branch()
+    public function canAccessPanel(Panel $panel): bool
+    {
+//        return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
+        return true;
+    }
+
+
+    public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
     }
