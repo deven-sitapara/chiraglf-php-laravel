@@ -1,5 +1,7 @@
 <?php
 
+use Filament\Pages\Auth\Login;
+
 return [
 
     /*
