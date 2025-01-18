@@ -226,7 +226,7 @@ class FileResource extends Resource
         return [
             'index' => Pages\ListFiles::route('/'),
             // 'create' => Pages\CreateFile::route('/create'),
-            // 'edit' => Pages\EditFile::route('/{record}/edit'),
+            'edit' => Pages\EditFile::route('/{record}/edit'),
             //            'view' => Pages\ViewFile::route('/{record}'),
             //            'tsr' => Pages\ViewFile::route('/{record}/tsr'),
 

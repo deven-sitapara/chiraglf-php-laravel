@@ -17,30 +17,11 @@ class SearchRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        return SearchResource::form($form,true);
+        return SearchResource::form($form, true);
     }
 
     public function table(Table $table): Table
     {
-        return $table
-            ->recordTitleAttribute('Searches')
-            ->columns(
-                SearchResource::getTableColumns()
-            )
-            ->filters([
-                //
-            ])
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+        return SearchResource::table($table, true);
     }
 }

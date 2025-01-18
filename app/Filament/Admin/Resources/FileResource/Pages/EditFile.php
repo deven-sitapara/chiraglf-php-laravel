@@ -12,4 +12,11 @@ class EditFile extends EditRecord
     use RedirectsToListingPage;
 
     protected static string $resource = FileResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            //            Actions\DeleteAction::make(),
+        ];
+    }
 }

@@ -41,11 +41,12 @@ class SearchResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function table(Table $table, bool $disableForeignKeys = false): Table
     {
         return $table
             ->columns(
                 [
+
                     TextColumn::make('file.id')->label('File Number'),
                     TextColumn::make('search_number')->label('Search Number'),
                     TextColumn::make('date'),
