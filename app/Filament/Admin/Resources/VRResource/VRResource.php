@@ -17,17 +17,11 @@ class VRResource extends Resource
     protected static ?string $model = VR::class;
 
     protected static ?string $navigationIcon = 'heroicon-s-shield-check';
-    protected static ?string $title = 'VRs';
-
-    protected static ?string $navigationLabel = 'VRs';
     protected static ?string $slug = 'vrs';
-    protected static ?string $breadcrumb = 'VRs';
-
     protected static ?string $navigationGroup = 'File';
     public static ?int $navigationSort = 7; // Adjust the number to set the order
-
-
-
+    protected static ?string $modelLabel = 'VR';
+    protected static ?string $navigationLabel = 'VRs';
 
 
 
@@ -59,8 +53,10 @@ class VRResource extends Resource
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->label('New VR')->modelLabel('New VR')
+                Tables\Actions\CreateAction::make()->label('New VR')
             ])
+            ->heading('VRs')
+            ->modelLabel('VR')
             ->actions([
                 //- New
                 //- Edit
@@ -73,7 +69,6 @@ class VRResource extends Resource
                     Tables\Actions\Action::make('Add Queries')->label('Add Queries'),
                     Tables\Actions\Action::make('DS Report Upload')->label('DS Report Upload'),
                 ]),
-
                 Tables\Actions\EditAction::make(),
                 //                Tables\Actions\DeleteAction::make(),
             ])
@@ -95,8 +90,6 @@ class VRResource extends Resource
     {
         return [
             'index' => Pages\ListVRS::route('/'),
-            'create' => Pages\CreateVR::route('/create'),
-            'edit' => Pages\EditVR::route('/{record}/edit'),
         ];
     }
 }

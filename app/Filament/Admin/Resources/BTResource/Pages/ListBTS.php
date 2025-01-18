@@ -10,6 +10,5 @@ class ListBTS extends ListRecords
 {
     protected static string $resource = BTResource::class;
 
-    public static ?string $title = 'BTs';
-
- }
+    public static ?string $title = '';
+}

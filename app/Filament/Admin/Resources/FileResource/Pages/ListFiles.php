@@ -9,11 +9,5 @@ use Filament\Resources\Pages\ListRecords;
 class ListFiles extends ListRecords
 {
     protected static string $resource = FileResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\CreateAction::make(),
-        ];
-    }
+    protected static ?string $title = "";
 }

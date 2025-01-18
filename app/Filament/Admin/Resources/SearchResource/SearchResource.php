@@ -22,10 +22,6 @@ class SearchResource extends Resource
     protected static ?string $navigationGroup = 'File';
     public static ?int $navigationSort = 3; // Adjust the number to set the order
 
-
-
-
-
     public static function form(Form $form, bool $disableForeignKeys = false): Form
     {
         return $form
@@ -45,25 +41,21 @@ class SearchResource extends Resource
             ]);
     }
 
-    public static function getTableColumns(): array
-    {
-        return [
-            TextColumn::make('file.id')->label('File Number'),
-            TextColumn::make('search_number')->label('Search Number'),
-            TextColumn::make('date'),
-            TextColumn::make('years_required'),
-        ];
-    }
-
     public static function table(Table $table): Table
     {
         return $table
             ->columns(
-                self::getTableColumns()
+                [
+                    TextColumn::make('file.id')->label('File Number'),
+                    TextColumn::make('search_number')->label('Search Number'),
+                    TextColumn::make('date'),
+                    TextColumn::make('years_required'),
+                ]
             )
             ->filters([
                 //
             ])
+            ->heading('Searches')
             ->headerActions([
                 Tables\Actions\CreateAction::make()->label('New Search')->modelLabel('New Search')
 

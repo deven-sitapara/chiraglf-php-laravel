@@ -19,8 +19,6 @@ class BTResource extends Resource
     protected static ?string $model = BT::class;
 
     protected static ?string $navigationIcon = 'heroicon-c-academic-cap';
-
-
     protected static ?string $navigationLabel = 'BTs';
     protected static ?string $slug = 'bts';
     protected static ?string $breadcrumb = 'BTs';
@@ -83,9 +81,10 @@ class BTResource extends Resource
             ->filters([
                 //
             ])
+            ->heading('BTs')
             ->headerActions([
                 Tables\Actions\CreateAction::make()->label('New BT')
-                    ->modelLabel('New BT')
+                    ->modelLabel('New BT')->createAnother(false)
             ])
 
             ->actions([

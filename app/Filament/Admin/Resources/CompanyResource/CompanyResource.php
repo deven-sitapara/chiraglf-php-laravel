@@ -6,7 +6,9 @@ use App\Models\Company;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class CompanyResource extends Resource
@@ -76,8 +78,10 @@ class CompanyResource extends Resource
             ->columns([
                 // add fields
 
-                Tables\Columns\TextColumn::make('name')->label('Company Name'),
-                Tables\Columns\TextColumn::make('emails')
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Company Name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('emails')->searchable()
                     ->label('Emails')
                     ->formatStateUsing(function ($state) {
 
@@ -106,14 +110,17 @@ class CompanyResource extends Resource
                 Tables\Columns\TextColumn::make('vr_fee')->label('VR Fee'),
                 Tables\Columns\TextColumn::make('document_fee')->label('Document Fee'),
                 Tables\Columns\TextColumn::make('bt_fee')->label('BT Fee'),
-                // Tables\Columns\TextColumn::make('created_at')->dateTime(),
-                // Tables\Columns\TextColumn::make('updated_at')->dateTime(),
-
-
-
             ])
             ->filters([
-                //
+            ])
+            ->searchDebounce('800ms')
+            ->searchPlaceholder('Search (Company, Email)')
+            ->heading('Companies')
+
+            ->headerActions([
+
+                Tables\Actions\CreateAction::make(),
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -136,8 +143,8 @@ class CompanyResource extends Resource
     {
         return [
             'index' => Pages\ListCompanies::route('/'),
-            'create' => Pages\CreateCompany::route('/create'),
-            'edit' => Pages\EditCompany::route('/{record}/edit'),
+//            'create' => Pages\CreateCompany::route('/create'),
+//            'edit' => Pages\EditCompany::route('/{record}/edit'),
         ];
     }
 }

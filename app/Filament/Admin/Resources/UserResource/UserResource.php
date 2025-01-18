@@ -23,9 +23,6 @@ class UserResource extends Resource
     protected static ?string $navigationGroup = 'Settings';
     public static ?int $navigationSort = 10; // Adjust the number to set the order
 
-
-
-
     public static function form(Form $form): Form
     {
         return $form
@@ -88,6 +85,12 @@ class UserResource extends Resource
                         'Staff' => 'Staff',
                     ]),
             ])
+            ->paginated(false)
+            ->heading('Users')
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
+
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
@@ -109,8 +112,8 @@ class UserResource extends Resource
     {
         return [
             'index' => ListUsers::route('/'),
-            'create' => CreateUser::route('/create'),
-            'edit' => EditUser::route('/{record}/edit'),
+//            'create' => CreateUser::route('/create'),
+//            'edit' => EditUser::route('/{record}/edit'),
         ];
     }
 }

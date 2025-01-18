@@ -9,6 +9,5 @@ use Filament\Resources\Pages\ListRecords;
 class ListExtraWorks extends ListRecords
 {
     protected static string $resource = ExtraWorkResource::class;
-
-
+    protected static ?string $title = "";
 }

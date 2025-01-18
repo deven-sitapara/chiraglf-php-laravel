@@ -60,30 +60,26 @@ class DocumentResource extends Resource
             ]);
     }
 
-
-    public static function getTableColumns(): array
-    {
-        return [
-            TextColumn::make('file.id')->label('File Number'),
-            TextColumn::make('document_number')->label('Document Number'),
-            TextColumn::make('date'),
-            TextColumn::make('type'),
-            TextColumn::make('executing_party_name'),
-            TextColumn::make('executing_party_mobile'),
-            TextColumn::make('contact_person'),
-            TextColumn::make('contact_person_mobile')
-        ];
-    }
-
     public static function table(Table $table): Table
     {
         return $table
             ->columns(
-                self::getTableColumns()
+                [
+                    TextColumn::make('file.id')->label('File Number'),
+                    TextColumn::make('document_number')->label('Document Number'),
+                    TextColumn::make('date'),
+                    TextColumn::make('type'),
+                    TextColumn::make('executing_party_name'),
+                    TextColumn::make('executing_party_mobile'),
+                    TextColumn::make('contact_person'),
+                    TextColumn::make('contact_person_mobile')
+
+                ]
             )
             ->filters([
                 //
             ])
+            ->heading('Documents')
             ->actions([
 
                 Tables\Actions\ActionGroup::make(

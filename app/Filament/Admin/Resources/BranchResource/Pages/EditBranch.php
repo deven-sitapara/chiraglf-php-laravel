@@ -10,10 +10,4 @@ class EditBranch extends EditRecord
 {
     protected static string $resource = BranchResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
 }

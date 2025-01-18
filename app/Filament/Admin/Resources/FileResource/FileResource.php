@@ -27,7 +27,7 @@ class FileResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'File';
     public static ?int $navigationSort = 1; // Adjust the number to set the order
-
+    protected static ?string $modelLabel = 'File';
 
 
     public static function form(Form $form): Form
@@ -150,17 +150,15 @@ class FileResource extends Resource
                             );
                     })
             ])
+            ->heading("Files")
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
+            ])
             ->actions([
                 ActionGroup::make([
                     EmailAction::make(),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
-//                    Tables\Actions\Action::make('tsr')
-//                        ->icon('heroicon-o-document')
-//                        ->label('Open TSR')
-//                        ->action(function ($record, ) {
-//                            redirect("/tsr");
-//                        }),
                     Tables\Actions\Action::make('handover')
                         ->color('success')
                         ->icon('heroicon-o-check-circle')
@@ -227,8 +225,8 @@ class FileResource extends Resource
     {
         return [
             'index' => Pages\ListFiles::route('/'),
-            'create' => Pages\CreateFile::route('/create'),
-            'edit' => Pages\EditFile::route('/{record}/edit'),
+            // 'create' => Pages\CreateFile::route('/create'),
+            // 'edit' => Pages\EditFile::route('/{record}/edit'),
             //            'view' => Pages\ViewFile::route('/{record}'),
             //            'tsr' => Pages\ViewFile::route('/{record}/tsr'),
 

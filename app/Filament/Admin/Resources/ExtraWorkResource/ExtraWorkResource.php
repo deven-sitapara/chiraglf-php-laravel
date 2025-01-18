@@ -23,23 +23,6 @@ class ExtraWorkResource extends Resource
     public static ?int $navigationSort = 5; // Adjust the number to set the order
 
 
-
-
-    public static function getTableColumns(): array
-    {
-        return [
-            TextColumn::make('file.id')->label('File Number'),
-            TextColumn::make('extra_work_number')->label('Extra Work Number'),
-            TextColumn::make('date'),
-            TextColumn::make('customer_contact'),
-            TextColumn::make('email'),
-            TextColumn::make('work_details'),
-            TextColumn::make('total_amount'),
-            TextColumn::make('received_amount'),
-
-        ];
-    }
-
     public static function form(Form $form, bool $disableForeignKeys = false): Form
     {
         return $form
@@ -63,11 +46,22 @@ class ExtraWorkResource extends Resource
     {
         return $table
             ->columns(
-                self::getTableColumns()
+                [
+                    TextColumn::make('file.id')->label('File Number'),
+                    TextColumn::make('extra_work_number')->label('Extra Work Number'),
+                    TextColumn::make('date'),
+                    TextColumn::make('customer_contact'),
+                    TextColumn::make('email'),
+                    TextColumn::make('work_details'),
+                    TextColumn::make('total_amount'),
+                    TextColumn::make('received_amount'),
+
+                ]
             )
             ->filters([
                 //
             ])
+            ->heading('Extra Works')
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     //- New
@@ -86,6 +80,7 @@ class ExtraWorkResource extends Resource
             ->headerActions([
                 Tables\Actions\CreateAction::make()->label('New Extra Work')
                     ->modelLabel('New Extra Work')
+                    ->createAnother(false)
             ])
 
             ->bulkActions([

@@ -28,8 +28,6 @@ class TSRResource extends Resource
     protected static ?string $navigationGroup = 'File';
     public static ?int $navigationSort = 2; // Adjust the number to set the order
 
-
-
     public static function form(Form $form): Form
     {
         return self::common_form($form);
@@ -56,7 +54,7 @@ class TSRResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('file.id')->label('File Number'),
+                TextColumn::make('file.id')->label('File Number')->searchable(true),
                 TextColumn::make('tsr_number')->label('TSR Number'),
                 TextColumn::make('date')->date(),
             ])
@@ -64,6 +62,7 @@ class TSRResource extends Resource
             //                SelectFilter::make('file_id')
             //                    ->relationship('file', 'file_number'),
             //            ])
+            ->heading('TSRs')
             ->headerActions([
                 Tables\Actions\CreateAction::make()->label('New TSR')
             ])

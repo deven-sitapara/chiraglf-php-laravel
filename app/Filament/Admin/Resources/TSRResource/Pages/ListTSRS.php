@@ -10,12 +10,5 @@ class ListTSRS extends ListRecords
 {
     protected static string $resource = TSRResource::class;
 
-    public static ?string $title = 'TSRs';
-
-    protected function getHeaderActions(): array
-    {
-        return [
-//            Actions\CreateAction::make(),
-         ];
-    }
+    public static ?string $title = '';
 }

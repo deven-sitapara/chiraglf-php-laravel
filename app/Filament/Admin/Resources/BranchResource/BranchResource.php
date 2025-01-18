@@ -42,8 +42,13 @@ class BranchResource extends Resource
                 TextColumn::make('email'),
                 // TextColumn::make('created_at')->dateTime()->label('Created At'),
             ])
+            ->heading("Branches")
+            ->paginated(false)
             ->filters([
                 Tables\Filters\Filter::make('branch_name')->label('Branch Name'),
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

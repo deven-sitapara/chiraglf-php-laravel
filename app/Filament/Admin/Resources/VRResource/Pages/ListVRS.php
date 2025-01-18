@@ -9,13 +9,5 @@ use Filament\Resources\Pages\ListRecords;
 class ListVRS extends ListRecords
 {
     protected static string $resource = VRResource::class;
-
-    public static ?string $title = 'VRs';
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\CreateAction::make(),
-        ];
-    }
+    public static ?string $title = '';
 }
