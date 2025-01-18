@@ -86,6 +86,12 @@ return [
 
     'livewire_loading_delay' => 'default',
 
+    'auth' => [
+        'guard' => 'web', // or the guard you're using
+        'pages' => [
+            'login' => Login::class, // Point to your custom login page if needed
+        ],
+    ],
 
-    
+
 ];
