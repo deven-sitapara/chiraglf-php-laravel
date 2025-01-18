@@ -32,10 +32,11 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->spa()
-            // ->topbar(false)
-            // ->navigation(false)
-            // ->globalSearch(false)
-
+             ->topbar(true)
+             ->navigation(true)
+             ->globalSearch(true)
+            ->topNavigation()
+            ->breadcrumbs(false)
             ->colors([
                 'primary' => Color::Emerald,
             ])

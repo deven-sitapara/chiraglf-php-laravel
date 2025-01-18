@@ -159,12 +159,12 @@ class FileResource extends Resource
                     EmailAction::make(),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\Action::make('tsr')
-                        ->icon('heroicon-o-document')
-                        ->label('Open TSR')
-                        ->action(function ($record, ) {
-                            redirect("/tsr");
-                        }),
+//                    Tables\Actions\Action::make('tsr')
+//                        ->icon('heroicon-o-document')
+//                        ->label('Open TSR')
+//                        ->action(function ($record, ) {
+//                            redirect("/tsr");
+//                        }),
                     Tables\Actions\Action::make('handover')
                         ->color('success')
                         ->icon('heroicon-o-check-circle')
