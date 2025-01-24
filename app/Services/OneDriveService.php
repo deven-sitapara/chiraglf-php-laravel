@@ -74,6 +74,22 @@ class OneDriveService
             throw new Exception('Error uploading file');
         }
     }
+    public function uploadFile($localTemplatePath, $oneDrivePath): array | Exception
+    {
+        try {
+
+            $driveItemId = $this->getDriveItemIdByPath($oneDrivePath);
+
+            $inputStream = \GuzzleHttp\Psr7\Utils::streamFor(fopen($localTemplatePath, 'r'));
+
+            $file = $this->graph->drives()->byDriveId($this->drive_id)->items()->byDriveItemId($driveItemId)->content()->put($inputStream)->wait();
+
+            return $this->getFileDetails($file);
+        } catch (\Exception $e) {
+            // Log error
+            throw new Exception('Error uploading file');
+        }
+    }
 
     public function deleteFile($fileId): bool | Exception
     {
@@ -103,6 +119,33 @@ class OneDriveService
         } catch (\Exception $e) {
             // Log error or handle appropriately
             throw new Exception('Error finding the file');
+        }
+    }
+    public function getFileByPath($path): array | null
+    {
+        try {
+
+            $fileId = $this->getDriveItemIdByPath($path);
+            $file = $this->graph->drives()->byDriveId($this->drive_id)->items()->byDriveItemId($fileId)->get()->wait();
+
+            return $this->getFileDetails($file);
+        } catch (\Exception $e) {
+            // Log error or handle appropriately
+            throw new Exception('Error finding the file');
+        }
+    }
+
+    public function listFiles($directory): array | null
+    {
+        try {
+
+            $fileId = $this->getDriveItemIdByPath($directory);
+            $files = $this->graph->drives()->byDriveId($this->drive_id)->items()->byDriveItemId($fileId)->children()->get()->wait();
+
+            return $this->getFileDetails($files);
+        } catch (\Exception $e) {
+            // Log error or handle appropriately
+            throw new Exception('Error listing files');
         }
     }
 }

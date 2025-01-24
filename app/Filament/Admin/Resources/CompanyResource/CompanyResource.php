@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\CompanyResource;
 
 use App\Models\Company;
+use App\Services\OneDriveService;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Component;
@@ -83,15 +84,16 @@ class CompanyResource extends Resource
                                     ->acceptedFileTypes(self::$allowedFileTypes)
                                     //->storeFiles(false)  # Preventing files from being stored permanently
                                     ->directory('tsr_file_format')
-                                    ->getUploadedFileNameForStorageUsing(
-                                        fn(TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
-                                            ->prepend(
-                                                'tsr_file_format-'
-                                                    . now()->format('Y-m-d-H-i-s')
-                                                    . '-'
-                                                    . \Illuminate\Support\Str::slug($form->getRawState()['name'])  /* Company Name */
-                                            ),
-                                    ),
+                                    // ->getUploadedFileNameForStorageUsing(
+                                    //     fn(TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
+                                    //         ->prepend(
+                                    //             'tsr_file_format-'
+                                    //                 . now()->format('Y-m-d-H-i-s')
+                                    //                 . '-'
+                                    //                 . \Illuminate\Support\Str::slug($form->getRawState()['name'])  /* Company Name */
+                                    //         ),
+                                    // )
+                                    ->afterStateUpdated(self::uploadToOneDrive($form, 'tsr_file_format')),
                                 Forms\Components\FileUpload::make('document_file_format')
                                     ->label('Document File Default Format')
                                     ->nullable()
@@ -240,5 +242,44 @@ class CompanyResource extends Resource
             //            'create' => Pages\CreateCompany::route('/create'),
             //            'edit' => Pages\EditCompany::route('/{record}/edit'),
         ];
+    }
+
+    public static function uploadToOneDrive($form, $directory)
+    {
+        return function ($state) use ($form, $directory) {
+            // Check if file exists and is valid
+            if (!$state instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
+                return null;
+            }
+
+            /** @var OneDriveService $oneDriveService */
+            $oneDriveService = app(OneDriveService::class);
+
+            $filename = $state->getClientOriginalName(); // get new filename
+
+            $newFileName = 'tsr_file_format-'
+                . now()->format('Y-m-d-H-i-s')
+                . '-'
+                . \Illuminate\Support\Str::slug($form->getRawState()['name'])
+                . '.' . $state->getClientOriginalExtension();
+
+            $path = $state->getRealPath();
+
+            try {
+                $uploadResult = $oneDriveService->uploadFileFromTemplate(
+                    $path,
+                    "{$directory}/{$newFileName}"
+                );
+
+                return [
+                    'filename' => $filename,
+                    'onedrive_file_id' => $uploadResult['id'] ?? null,
+                    'onedrive_web_url' => $uploadResult['webUrl'] ?? null,
+                ];
+            } catch (\Exception $e) {
+                // Log error
+                return null;
+            }
+        };
     }
 }
