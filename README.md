@@ -2,23 +2,22 @@
 
 ## About Law Firm ERP
 
-Law firm erp app build with Laravel PHP framework. 
-
+Law firm erp app build with Laravel PHP framework.
 
 ## Modules
 
-  - Dashboard 
-  - Files
-    - TSR
-    - Documents
-    - VR
-    - BT
-    - Extra Work
-    - Search
-  - Settings
-    - Users
-    - Branches
-    - Companies
+-   Dashboard
+-   Files
+    -   TSR
+    -   Documents
+    -   VR
+    -   BT
+    -   Extra Work
+    -   Search
+-   Settings
+    -   Users
+    -   Branches
+    -   Companies
 
 ## Library Used
 
@@ -28,13 +27,18 @@ Law firm erp app build with Laravel PHP framework.
 ## Icons
 
     - heroicons
-    
 
 ## Commands Used
 
 ```
-    
-    php artisan make:migration  
+
+    php artisan make:migration
 
 ```
 
+## Testing
+
+```
+./vendor/bin/pest tests/Feature/OneDriveTest.php
+
+```

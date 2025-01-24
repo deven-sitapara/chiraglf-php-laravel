@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    // MsGraph
+    'microsoft' => [
+        'client_id' => env('GRAPH_CLIENT_ID'),
+        'client_secret' => env('GRAPH_CLIENT_SECRET'),
+        'tenant_id' => env('GRAPH_CLIENT_TENENT_ID'),
+        // 'redirect' => env('MS_GRAPH_REDIRECT'),
+        'user_id' => env('GRAPH_CLIENT_USER_ID'),
+        'drive_id' => env('GRAPH_CLIENT_DRIVE_ID'),
+    ],
+
 ];
