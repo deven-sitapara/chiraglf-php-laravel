@@ -41,6 +41,8 @@ return [
         'client_secret' => env('GRAPH_CLIENT_SECRET'),
         'tenant_id' => env('GRAPH_CLIENT_TENENT_ID'),
         // 'redirect' => env('MS_GRAPH_REDIRECT'),
+        'root' => env('GRAPH_CLIENT_ONEDRIVE_ROOT', 'root:'),
+        'base_dir' => env('GRAPH_CLIENT_ONEDRIVE_BASE_DIR', 'chiraglf-webapp'),
         'user_id' => env('GRAPH_CLIENT_USER_ID'),
         'drive_id' => env('GRAPH_CLIENT_DRIVE_ID'),
     ],

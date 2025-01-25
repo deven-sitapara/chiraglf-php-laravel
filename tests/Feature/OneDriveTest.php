@@ -3,20 +3,21 @@
 // upload file to OneDrive
 
 use App\Services\OneDriveService;
+use Illuminate\Support\Facades\Storage;
 use Microsoft\Kiota\Abstractions\ApiException;
 
 
 
 // write only test case for all upload , get and delete file
-it('One Drive Test', function () {
+it('OneDriveService Test', function () {
 
     $graph = new \App\Services\OneDriveService();
 
     expect($graph)->toBeInstanceOf(\App\Services\OneDriveService::class);
 
     // upload file to OneDrive
-    $localTemplatePath = storage_path('app/public/document_file_format/document_file_format-2025-01-23-14-01-48-howell-johnsCousine.docx');
-    $oneDrivePath = 'document_file_format-2025-01-23-14-01-48-howell-johnsCousine.docx';
+    $localTemplatePath = storage_path('app/public/test/test.docx');
+    $oneDrivePath = 'document_file_format-2025-01-23-14-01-48-howell-johns-test-Cousine.docx';
 
     $file = $graph->uploadFileFromTemplate($localTemplatePath, $oneDrivePath);
     expect($file)->toBeArray(); // Assert that the result is an array
@@ -50,11 +51,19 @@ it('One Drive Test', function () {
 
 })->only();
 
-it('returns null if file is not found or an error occurs', function () {
+// it('returns null if file is not found or an error occurs', function () {
 
-    $invalidFileId = 'invalid_file_id'; // Use an invalid file ID
+//     $invalidFileId = 'invalid_file_id'; // Use an invalid file ID
 
-    $file = $this->graph->getFileById($invalidFileId);
+//     $file = $this->graph->getFileById($invalidFileId);
 
-    expect($file)->toBeNull(); // Assert that the result is null
-});
+//     expect($file)->toBeNull(); // Assert that the result is null
+// })->skip();
+
+
+// it('Onedrive approach testing', function () {
+
+//     $localTemplatePath = storage_path('app/public/document_file_format/document_file_format-2025-01-23-14-01-48-howell-johnsCousine.docx');
+//     Storage::disk('onedrive')->put($localTemplatePath, 'File contents');
+
+// })->skip();

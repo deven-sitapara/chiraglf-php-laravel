@@ -14,7 +14,8 @@ class OneDriveService
     private $graph;
     private $accessToken;
     private $drive_id;
-    private $base_dir = 'chiraglf-webapp';
+    private $base_dir;
+    private $root;
 
     public function __construct()
     {
@@ -25,12 +26,15 @@ class OneDriveService
     {
         //initialize drive id
         $this->drive_id = config('services.microsoft.drive_id');
+        $this->root = config('services.microsoft.root', 'root:');
+        $this->base_dir = config('services.microsoft.base_dir', 'chiraglf-webapp');
 
         $tokenRequestContext = new ClientCredentialContext(
             config('services.microsoft.tenant_id'),
             config('services.microsoft.client_id'),
             config('services.microsoft.client_secret')
         );
+
 
         $this->graph = new GraphServiceClient($tokenRequestContext);
     }
@@ -54,7 +58,8 @@ class OneDriveService
 
     private function getDriveItemIdByPath($path)
     {
-        return "root:/{$this->base_dir}/{$path}:";
+
+        return "{$this->root}/{$this->base_dir}/{$path}:";
     }
 
     // action methods
