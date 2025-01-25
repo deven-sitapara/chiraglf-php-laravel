@@ -28,8 +28,9 @@ class CompanyResource extends Resource
 
     protected static array $allowedFileTypes =
     [
+        'application/octet-stream',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', /*  Newer Word Format (.docx): */
         'application/msword', /*  Older Word Format (.doc): */
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document' /*  Newer Word Format (.docx): */
     ];
 
 
@@ -75,93 +76,46 @@ class CompanyResource extends Resource
                             ]),
                         Tabs\Tab::make('File Formats')
                             ->schema([
-
                                 Forms\Components\FileUpload::make('tsr_file_format')
                                     ->label('TSR File Default Format')
                                     ->nullable()
                                     ->downloadable()
                                     ->moveFiles()
-                                    ->acceptedFileTypes(self::$allowedFileTypes)
-                                    //->storeFiles(false)  # Preventing files from being stored permanently
-                                    ->directory('tsr_file_format')
-                                    // ->getUploadedFileNameForStorageUsing(
-                                    //     fn(TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
-                                    //         ->prepend(
-                                    //             'tsr_file_format-'
-                                    //                 . now()->format('Y-m-d-H-i-s')
-                                    //                 . '-'
-                                    //                 . \Illuminate\Support\Str::slug($form->getRawState()['name'])  /* Company Name */
-                                    //         ),
-                                    // )
+                                    ->previewable(true)
+                                    // ->acceptedFileTypes(self::$allowedFileTypes)
                                     ->afterStateUpdated(self::uploadToOneDrive($form, 'tsr_file_format')),
                                 Forms\Components\FileUpload::make('document_file_format')
                                     ->label('Document File Default Format')
                                     ->nullable()
                                     ->downloadable()
                                     ->moveFiles()
-                                    ->acceptedFileTypes(self::$allowedFileTypes)
-                                    //->storeFiles(false)  # Preventing files from being stored permanently
-                                    ->directory('document_file_format')
-                                    ->getUploadedFileNameForStorageUsing(
-                                        fn(TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
-                                            ->prepend(
-                                                'document_file_format-'
-                                                    . now()->format('Y-m-d-H-i-s')
-                                                    . '-'
-                                                    . \Illuminate\Support\Str::slug($form->getRawState()['name']) /* Company Name */
-                                            ),
-                                    ),
+                                    ->previewable(true)
+                                    // ->acceptedFileTypes(self::$allowedFileTypes)
+                                    ->afterStateUpdated(self::uploadToOneDrive($form, 'document_file_format')),
                                 Forms\Components\FileUpload::make('vr_file_format')
                                     ->label('VR File Default Format')
                                     ->nullable()
                                     ->downloadable()
                                     ->moveFiles()
-                                    ->acceptedFileTypes(self::$allowedFileTypes)
-                                    //->storeFiles(false)  # Preventing files from being stored permanently
-                                    ->directory('vr_file_format')
-                                    ->getUploadedFileNameForStorageUsing(
-                                        fn(TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
-                                            ->prepend(
-                                                'vr_file_format-'
-                                                    . now()->format('Y-m-d-H-i-s')
-                                                    . '-'
-                                                    . \Illuminate\Support\Str::slug($form->getRawState()['name']) /* Company Name */
-                                            ),
-                                    ),
+                                    ->previewable(true)
+                                    // ->acceptedFileTypes(self::$allowedFileTypes)
+                                    ->afterStateUpdated(self::uploadToOneDrive($form, 'vr_file_format')),
                                 Forms\Components\FileUpload::make('search_file_format')
                                     ->label('Search File Default Format')
                                     ->nullable()
                                     ->downloadable()
                                     ->moveFiles()
-                                    ->acceptedFileTypes(self::$allowedFileTypes)
-                                    //->storeFiles(false)  # Preventing files from being stored permanently
-                                    ->directory('search_file_format')
-                                    ->getUploadedFileNameForStorageUsing(
-                                        fn(TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
-                                            ->prepend(
-                                                'search_file_format-'
-                                                    . now()->format('Y-m-d-H-i-s')
-                                                    . '-'
-                                                    . \Illuminate\Support\Str::slug($form->getRawState()['name']) /* Company Name */
-                                            ),
-                                    ),
+                                    ->previewable(true)
+                                    // ->acceptedFileTypes(self::$allowedFileTypes)
+                                    ->afterStateUpdated(self::uploadToOneDrive($form, 'search_file_format')),
                                 Forms\Components\FileUpload::make('ew_file_format')
                                     ->label('Extra Work File Default Format')
                                     ->nullable()
                                     ->downloadable()
                                     ->moveFiles()
-                                    ->acceptedFileTypes(self::$allowedFileTypes)
-                                    //->storeFiles(false)  # Preventing files from being stored permanently
-                                    ->directory('ew_file_format')
-                                    ->getUploadedFileNameForStorageUsing(
-                                        fn(TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
-                                            ->prepend(
-                                                'ew_file_format-'
-                                                    . now()->format('Y-m-d-H-i-s')
-                                                    . '-'
-                                                    . \Illuminate\Support\Str::slug($form->getRawState()['name']) /* Company Name */
-                                            ),
-                                    )
+                                    ->previewable(true)
+                                    // ->acceptedFileTypes(self::$allowedFileTypes)
+                                    ->afterStateUpdated(self::uploadToOneDrive($form, 'ew_file_format')),
                             ]),
                     ]),
 
@@ -244,9 +198,13 @@ class CompanyResource extends Resource
         ];
     }
 
-    public static function uploadToOneDrive($form, $directory)
+    public static function uploadToOneDrive($form, $type, $directory = 'company_formats'): Closure
     {
-        return function ($state) use ($form, $directory) {
+
+        return function ($state) use ($form, $type, $directory) {
+
+            // dd($state);
+
             // Check if file exists and is valid
             if (!$state instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
                 return null;
@@ -257,19 +215,24 @@ class CompanyResource extends Resource
 
             $filename = $state->getClientOriginalName(); // get new filename
 
-            $newFileName = 'tsr_file_format-'
-                . now()->format('Y-m-d-H-i-s')
-                . '-'
-                . \Illuminate\Support\Str::slug($form->getRawState()['name'])
-                . '.' . $state->getClientOriginalExtension();
+            // $time = now()->format('Y-m-d-H-i-s');
+            // $time = now()->format('Y-m-d');
+            $companySlug = \Illuminate\Support\Str::slug($form->getRawState()['name']);
+            $extension = $state->getClientOriginalExtension();
+            $newFileName = "{$companySlug}-{$type}.{$extension}";
 
-            $path = $state->getRealPath();
 
+            $localPath = $state->getRealPath();
+            $oneDrivePath = "{$directory}/{$newFileName}";
             try {
+
                 $uploadResult = $oneDriveService->uploadFileFromTemplate(
-                    $path,
-                    "{$directory}/{$newFileName}"
+                    $localPath,
+                    $oneDrivePath
                 );
+
+                // remove the file from the local storage
+                unlink($localPath);
 
                 return [
                     'filename' => $filename,
