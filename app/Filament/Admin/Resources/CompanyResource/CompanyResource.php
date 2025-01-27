@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\CompanyResource;
 
+use App\Helpers\OneDriveFileHelper;
 use App\Models\Company;
 use App\Services\OneDriveService;
 use Closure;
@@ -33,8 +34,26 @@ class CompanyResource extends Resource
         'application/msword', /*  Older Word Format (.doc): */
     ];
 
-
-
+    public static function uploadFileComponent($form, $fieldName, $label)
+    {
+ 
+        return Forms\Components\FileUpload::make($fieldName)
+            ->label($label)
+            ->nullable()
+            ->downloadable()
+            // ->moveFiles()
+            ->previewable(true)
+            // ->acceptedFileTypes(self::$allowedFileTypes)
+            ->directory($fieldName)
+            ->getUploadedFileNameForStorageUsing(
+                fn(TemporaryUploadedFile $file): string => self::getNewFileName(
+                    \Illuminate\Support\Str::slug($form->getRawState()['name']),
+                    $fieldName,
+                    $file->getClientOriginalExtension()
+                )
+            )
+            ->afterStateUpdated(self::uploadToOneDrive($form, $fieldName));
+    }
 
     public static function form(Form $form): Form
     {
@@ -61,7 +80,7 @@ class CompanyResource extends Resource
                                             ->required()
                                             ->maxLength(255),
                                     ])
-                                    ->minItems(1)
+                                    ->minItems(0)
                                     ->maxItems(10)
                                     ->required(), // Ensure the emails field is required
                             ]),
@@ -76,46 +95,13 @@ class CompanyResource extends Resource
                             ]),
                         Tabs\Tab::make('File Formats')
                             ->schema([
-                                Forms\Components\FileUpload::make('tsr_file_format')
-                                    ->label('TSR File Default Format')
-                                    ->nullable()
-                                    ->downloadable()
-                                    ->moveFiles()
-                                    ->previewable(true)
-                                    // ->acceptedFileTypes(self::$allowedFileTypes)
-                                    ->afterStateUpdated(self::uploadToOneDrive($form, 'tsr_file_format')),
-                                Forms\Components\FileUpload::make('document_file_format')
-                                    ->label('Document File Default Format')
-                                    ->nullable()
-                                    ->downloadable()
-                                    ->moveFiles()
-                                    ->previewable(true)
-                                    // ->acceptedFileTypes(self::$allowedFileTypes)
-                                    ->afterStateUpdated(self::uploadToOneDrive($form, 'document_file_format')),
-                                Forms\Components\FileUpload::make('vr_file_format')
-                                    ->label('VR File Default Format')
-                                    ->nullable()
-                                    ->downloadable()
-                                    ->moveFiles()
-                                    ->previewable(true)
-                                    // ->acceptedFileTypes(self::$allowedFileTypes)
-                                    ->afterStateUpdated(self::uploadToOneDrive($form, 'vr_file_format')),
-                                Forms\Components\FileUpload::make('search_file_format')
-                                    ->label('Search File Default Format')
-                                    ->nullable()
-                                    ->downloadable()
-                                    ->moveFiles()
-                                    ->previewable(true)
-                                    // ->acceptedFileTypes(self::$allowedFileTypes)
-                                    ->afterStateUpdated(self::uploadToOneDrive($form, 'search_file_format')),
-                                Forms\Components\FileUpload::make('ew_file_format')
-                                    ->label('Extra Work File Default Format')
-                                    ->nullable()
-                                    ->downloadable()
-                                    ->moveFiles()
-                                    ->previewable(true)
-                                    // ->acceptedFileTypes(self::$allowedFileTypes)
-                                    ->afterStateUpdated(self::uploadToOneDrive($form, 'ew_file_format')),
+                                self::uploadFileComponent($form, 'tsr_file_format', 'TSR File Default Format'),
+                                self::uploadFileComponent($form, 'document_file_format', 'Document File Default Format'),
+                                self::uploadFileComponent($form, 'vr_file_format', 'VR File Default Format'),
+                                self::uploadFileComponent($form, 'search_file_format', 'Search File Default Format'),
+                                self::uploadFileComponent($form, 'ew_file_format', 'Extra Work File Default Format'),
+
+
                             ]),
                     ]),
 
@@ -198,6 +184,16 @@ class CompanyResource extends Resource
         ];
     }
 
+    public static function getUploadPath($directory, $newFileName)
+    {
+        return  "{$directory}/{$newFileName}";
+    }
+    public static function getNewFileName($companySlug, $type, $extension)
+    {
+        return "{$companySlug}-{$type}.{$extension}";
+    }
+
+
     public static function uploadToOneDrive($form, $type, $directory = 'company_formats'): Closure
     {
 
@@ -210,35 +206,20 @@ class CompanyResource extends Resource
                 return null;
             }
 
-            /** @var OneDriveService $oneDriveService */
-            $oneDriveService = app(OneDriveService::class);
-
-            $filename = $state->getClientOriginalName(); // get new filename
-
-            // $time = now()->format('Y-m-d-H-i-s');
-            // $time = now()->format('Y-m-d');
             $companySlug = \Illuminate\Support\Str::slug($form->getRawState()['name']);
             $extension = $state->getClientOriginalExtension();
-            $newFileName = "{$companySlug}-{$type}.{$extension}";
 
-
-            $localPath = $state->getRealPath();
-            $oneDrivePath = "{$directory}/{$newFileName}";
             try {
 
-                $uploadResult = $oneDriveService->uploadFileFromTemplate(
+                $localPath = $state->getRealPath();
+                $newFileName = self::getNewFileName($companySlug, $type, $extension);
+                $oneDrivePath = self::getUploadPath($directory, $newFileName);
+
+                return OneDriveFileHelper::storeFile(
                     $localPath,
-                    $oneDrivePath
+                    $oneDrivePath,
+                    false
                 );
-
-                // remove the file from the local storage
-                unlink($localPath);
-
-                return [
-                    'filename' => $filename,
-                    'onedrive_file_id' => $uploadResult['id'] ?? null,
-                    'onedrive_web_url' => $uploadResult['webUrl'] ?? null,
-                ];
             } catch (\Exception $e) {
                 // Log error
                 return null;

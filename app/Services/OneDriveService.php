@@ -56,6 +56,16 @@ class OneDriveService
         }
     }
 
+    public function getSharableLink($fileDetails): string
+    {
+        return $fileDetails['webUrl'];
+    }
+
+    public function getFileID($fileDetails): string
+    {
+        return $fileDetails['id'];
+    }
+
     private function getDriveItemIdByPath($path)
     {
 

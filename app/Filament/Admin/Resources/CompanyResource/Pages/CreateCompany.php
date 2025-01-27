@@ -11,4 +11,10 @@ class CreateCompany extends CreateRecord
     use RedirectsToListingPage;
 
     protected static string $resource = CompanyResource::class;
+
+    // creaete function to handle file operations
+    protected function beforeCreate($record)
+    {
+        // dd($record);
+    }
 }

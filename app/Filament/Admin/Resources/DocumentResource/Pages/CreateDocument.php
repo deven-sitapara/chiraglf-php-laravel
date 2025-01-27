@@ -11,4 +11,6 @@ class CreateDocument extends CreateRecord
     use RedirectsToListingPage;
 
     protected static string $resource = DocumentResource::class;
+
+    
 }
