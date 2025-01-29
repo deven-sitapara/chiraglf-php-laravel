@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\CompanyResource;
 
+use App\Helpers\FileHelper;
 use App\Helpers\OneDriveFileHelper;
 use App\Models\Company;
 use App\Services\OneDriveService;
@@ -10,6 +11,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
@@ -17,6 +19,7 @@ use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class CompanyResource extends Resource
@@ -27,36 +30,10 @@ class CompanyResource extends Resource
     public static ?int $navigationSort = 9; // Adjust the number to set the order
 
 
-    protected static array $allowedFileTypes =
-    [
-        'application/octet-stream',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', /*  Newer Word Format (.docx): */
-        'application/msword', /*  Older Word Format (.doc): */
-    ];
-
-    public static function uploadFileComponent($form, $fieldName, $label)
-    {
- 
-        return Forms\Components\FileUpload::make($fieldName)
-            ->label($label)
-            ->nullable()
-            ->downloadable()
-            // ->moveFiles()
-            ->previewable(true)
-            // ->acceptedFileTypes(self::$allowedFileTypes)
-            ->directory($fieldName)
-            ->getUploadedFileNameForStorageUsing(
-                fn(TemporaryUploadedFile $file): string => self::getNewFileName(
-                    \Illuminate\Support\Str::slug($form->getRawState()['name']),
-                    $fieldName,
-                    $file->getClientOriginalExtension()
-                )
-            )
-            ->afterStateUpdated(self::uploadToOneDrive($form, $fieldName));
-    }
 
     public static function form(Form $form): Form
     {
+
         return $form
             ->columns(1)
             ->schema([
@@ -95,12 +72,12 @@ class CompanyResource extends Resource
                             ]),
                         Tabs\Tab::make('File Formats')
                             ->schema([
-                                self::uploadFileComponent($form, 'tsr_file_format', 'TSR File Default Format'),
-                                self::uploadFileComponent($form, 'document_file_format', 'Document File Default Format'),
-                                self::uploadFileComponent($form, 'vr_file_format', 'VR File Default Format'),
-                                self::uploadFileComponent($form, 'search_file_format', 'Search File Default Format'),
-                                self::uploadFileComponent($form, 'ew_file_format', 'Extra Work File Default Format'),
 
+                                self::companyFileFormatUploadComponent('tsr_file_format', 'TSR File Default Format'),
+                                self::companyFileFormatUploadComponent('document_file_format', 'Document File Default Format'),
+                                self::companyFileFormatUploadComponent('vr_file_format', 'VR File Default Format'),
+                                self::companyFileFormatUploadComponent('search_file_format', 'Search File Default Format'),
+                                self::companyFileFormatUploadComponent('ew_file_format', 'Extra Work File Default Format'),
 
                             ]),
                     ]),
@@ -108,7 +85,79 @@ class CompanyResource extends Resource
             ]);
     }
 
+    public static function companyFileFormatUploadComponent($fieldName, $label)
+    {
+        // $_prefix = $prefix();
+        return  FileUpload::make($fieldName)
+            ->label($label)
+            ->nullable()
+            ->downloadable()
+            // ->moveFiles()
+            ->previewable(true)
+            // ->acceptedFileTypes(self::$allowedFileTypes)
+            ->directory('company_formats')
+            ->getUploadedFileNameForStorageUsing(
+                fn($get, TemporaryUploadedFile $file): string => self::getNewFileNameWithPrefix(
+                    \Illuminate\Support\Str::slug($get('name')), // company name as prefix
+                    $fieldName,
+                    $file->getClientOriginalExtension()
+                )
+            )
+            ->afterStateUpdated(self::companyUploadToOneDrive($fieldName, 'company_formats'));
+    }
 
+    public static function getNewFileNameWithPrefix($prefix, $fieldName, $extension)
+    {
+        return "{$prefix}-{$fieldName}.{$extension}";
+    }
+
+    public static function companyUploadToOneDrive($type, $directory = 'company_formats'): Closure
+    {
+
+        return function ($state, $get, $set, $record) use ($type, $directory) {
+
+            // dd($state);
+
+            // Check if file exists and is valid
+            if (!$state instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
+                return null;
+            }
+
+            // Log::info("get('name')");
+            // Log::info($get('name'));
+            $_prefix = \Illuminate\Support\Str::slug($get('name')); // companyname
+            $extension = $state->getClientOriginalExtension();
+
+            try {
+
+                $localPath = $state->getRealPath();
+                $newFileName = self::getNewFileNameWithPrefix($_prefix, $type, $extension);
+                $oneDrivePath = "{$directory}/{$newFileName}";
+
+
+                $uploadFileArray = OneDriveFileHelper::storeFile(
+                    $localPath,
+                    $oneDrivePath,
+                    false
+                );
+
+                if ($uploadFileArray) {
+                    // $set('tsr_file_format_url', $uploadFileArray['webUrl']);
+                    // $record->update([
+                    //     'tsr_file_format_url' => $uploadFileArray['webUrl']
+                    // ]);
+                }
+                // Log::info(__FILE__ . ' / ' . __FUNCTION__);
+                // Log::info(print_r($uploadFileArray, true));
+                // Log::info(print_r($state, true));
+
+                return $uploadFileArray;
+            } catch (\Exception $e) {
+                // Log error
+                return null;
+            }
+        };
+    }
     public static function table(Table $table): Table
     {
         return $table
@@ -182,48 +231,5 @@ class CompanyResource extends Resource
             //            'create' => Pages\CreateCompany::route('/create'),
             //            'edit' => Pages\EditCompany::route('/{record}/edit'),
         ];
-    }
-
-    public static function getUploadPath($directory, $newFileName)
-    {
-        return  "{$directory}/{$newFileName}";
-    }
-    public static function getNewFileName($companySlug, $type, $extension)
-    {
-        return "{$companySlug}-{$type}.{$extension}";
-    }
-
-
-    public static function uploadToOneDrive($form, $type, $directory = 'company_formats'): Closure
-    {
-
-        return function ($state) use ($form, $type, $directory) {
-
-            // dd($state);
-
-            // Check if file exists and is valid
-            if (!$state instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
-                return null;
-            }
-
-            $companySlug = \Illuminate\Support\Str::slug($form->getRawState()['name']);
-            $extension = $state->getClientOriginalExtension();
-
-            try {
-
-                $localPath = $state->getRealPath();
-                $newFileName = self::getNewFileName($companySlug, $type, $extension);
-                $oneDrivePath = self::getUploadPath($directory, $newFileName);
-
-                return OneDriveFileHelper::storeFile(
-                    $localPath,
-                    $oneDrivePath,
-                    false
-                );
-            } catch (\Exception $e) {
-                // Log error
-                return null;
-            }
-        };
     }
 }

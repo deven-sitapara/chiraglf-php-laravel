@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Exception;
+use Illuminate\Support\Facades\Log;
 use League\OAuth2\Client\Provider\GenericProvider;
 use Microsoft\Graph\Generated\Models\DriveItem;
 use Microsoft\Graph\GraphServiceClient;
@@ -39,17 +40,40 @@ class OneDriveService
         $this->graph = new GraphServiceClient($tokenRequestContext);
     }
 
+    private function getFilePath(DriveItem $file): string
+    {
+        // Extract parent reference to get folder name
+        $parentReference = $file->getParentReference();
+        $folderName = $parentReference ? $parentReference->getName() : 'root';
+
+        // Get the filename
+        $fileName = $file->getName();
+
+        // Return the dynamic path
+        return $folderName . '/' . $fileName;
+    }
+
     //private helper functions
     private function getFileDetails($file): array | null
     {
 
         if ($file) {
-            return [
+
+            // $folderPath = $file->parentReference->path;
+            // $relativePath = $folderPath . '/' . $file->name;
+
+            // Log::info(print_r($file, true));
+            $response = [
                 'id' => $file->getId(),
                 'name' => $file->getName(),
+                'path' => $this->getFilePath($file),
                 'webUrl' => $file->getWebUrl(),
                 'size' => $file->getSize()
             ];
+
+            Log::info(__FILE__ . ' / ' . __FUNCTION__);
+            Log::info(print_r($response, true));
+            return $response;
         } else {
             // Log error or handle appropriately
             return null;

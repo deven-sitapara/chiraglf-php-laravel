@@ -3,6 +3,8 @@
 namespace App\Helpers;
 
 use App\Services\OneDriveService;
+use Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class OneDriveFileHelper
@@ -13,11 +15,11 @@ class OneDriveFileHelper
         string $localPath,
         string $oneDrivePath,
         bool $unlinkLocalFile = false
-    ) {
+    ): array | Exception {
 
         try {
 
-            $uploadResult = (new OneDriveService())->uploadFileFromTemplate(
+            $uploadFileArray = (new OneDriveService())->uploadFileFromTemplate(
                 $localPath,
                 $oneDrivePath
             );
@@ -25,6 +27,8 @@ class OneDriveFileHelper
             // remove the file from the local storage
             $unlinkLocalFile && unlink($localPath);
 
+            // Log::info(__FILE__ . ' / ' . __FUNCTION__);
+            // Log::info(print_r($uploadFileArray, true));
             // output
             // return [
             //     'id' => $file->getId(),
@@ -32,7 +36,7 @@ class OneDriveFileHelper
             //     'webUrl' => $file->getWebUrl(),
             //     'size' => $file->getSize()
             // ];
-            return $uploadResult;
+            return $uploadFileArray;
         } catch (\Exception $e) {
             // Log error
             return null;

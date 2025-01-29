@@ -14,7 +14,8 @@ class TSR extends Model
     protected $fillable = [
         'file_id',
         'tsr_number',
-        'date'
+        'date',
+        'query'
     ];
     // CREATE TABLE "tsrs" ("id" integer primary key autoincrement not null, "file_id" integer not null, "tsr_number" varchar not null, "date" date not null, "created_at" datetime, "updated_at" datetime, foreign key("file_id") references "files"("id") on delete cascade)
 
@@ -39,5 +40,4 @@ class TSR extends Model
     {
         return $this->belongsTo(File::class);
     }
-
 }

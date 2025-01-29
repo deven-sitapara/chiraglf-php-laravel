@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\TSRResource;
 
 use App\Filament\Admin\Resources\FileResource\FileResource;
+use App\Helpers\FileHelper;
 use App\Models\TSR;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\DatePicker;
@@ -45,6 +46,10 @@ class TSRResource extends Resource
                 DatePicker::make('date')
                     ->required()
                     ->default(now()),
+
+                FileHelper::fileUploadComponent('search1_file_id', 'search1_file_url', 'Search 1', 'Searches'),
+                FileHelper::fileUploadComponent('search2_file_id', 'search2_file_id', 'Search 2', 'Searches'),
+                FileHelper::fileUploadComponent('ds_file_id', 'ds_file_id', 'DS File', 'TSR-DS')
             ]);
     }
 
