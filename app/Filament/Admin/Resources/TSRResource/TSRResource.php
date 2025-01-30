@@ -47,9 +47,19 @@ class TSRResource extends Resource
                     ->required()
                     ->default(now()),
 
-                FileHelper::fileUploadComponent('search1_file_id', 'search1_file_url', 'Search 1', 'Searches'),
-                FileHelper::fileUploadComponent('search2_file_id', 'search2_file_id', 'Search 2', 'Searches'),
+                //dont show in create
+                FileHelper::fileUploadComponent('search1_file_id', 'search1_file_url', 'Search 1', 'Searches')
+                    ->hidden(function ($record) {
+                        return !$record;
+                    }),
+                FileHelper::fileUploadComponent('search2_file_id', 'search2_file_id', 'Search 2', 'Searches')
+                    ->hidden(function ($record) {
+                        return !$record;
+                    }),
                 FileHelper::fileUploadComponent('ds_file_id', 'ds_file_id', 'DS File', 'TSR-DS')
+                    ->hidden(function ($record) {
+                        return !$record;
+                    })
             ]);
     }
 
