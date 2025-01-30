@@ -8,6 +8,7 @@ use App\Helpers\FileHelper;
 use App\Helpers\OneDriveFileHelper;
 use App\Services\OneDriveService;
 use Faker\Provider\ar_EG\Text;
+use Filament\Actions\Action as ActionsAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -71,15 +72,16 @@ class TSRRelationManager extends RelationManager
                 TextColumn::make('tsr_number')->label('TSR Number'),
                 TextColumn::make('date')->date(),
                 TextColumn::make('query')->label('Query')
-                    ->words(10)
-                    ->wrap(true)
+                    ->badge()
+                    ->words(20)
+                    ->color('danger')
                     ->tooltip(function ($record): string {
                         return (string) $record->query;
                     })
             ])
             ->actions([
 
-                //open tsr file
+                //TSR: open generated tsr file
                 Tables\Actions\Action::make('tsr_file_url')
                     ->label('')
                     ->tooltip('Open TSR')
@@ -90,7 +92,7 @@ class TSRRelationManager extends RelationManager
                     ->url(fn($record) => $record->tsr_file_url)
                     ->openUrlInNewTab(),
 
-                // open search1 file
+                // SEARCH: open search1 file
                 Tables\Actions\Action::make('search1_file_url')
                     ->label('')
                     ->tooltip('Open Search1')
@@ -101,7 +103,7 @@ class TSRRelationManager extends RelationManager
                     ->url(fn($record) => $record->search1_file_url)
                     ->openUrlInNewTab(),
 
-                // open search2 file
+                // SEARCH: open search2 file
                 Tables\Actions\Action::make('search2_file_url')
                     ->label('')
                     ->tooltip('Open Search2')
@@ -111,7 +113,18 @@ class TSRRelationManager extends RelationManager
                     })
                     ->url(fn($record) => $record->search2_file_url)
                     ->openUrlInNewTab(),
+                // DS: open ds file
+                Tables\Actions\Action::make('ds_file_url')
+                    ->label('')
+                    ->tooltip('DS File')
+                    ->icon('heroicon-s-finger-print')
+                    ->hidden(function ($record) {
+                        return !$record->ds_file_url;
+                    })
+                    ->url(fn($record) => $record->ds_file_url)
+                    ->openUrlInNewTab(),
 
+                //
                 //Action
                 ActionGroup::make([
                     Tables\Actions\Action::make('generate_file')
@@ -148,7 +161,7 @@ class TSRRelationManager extends RelationManager
                                     'Searches'
                                 )
                             ]))
-                        ->icon('heroicon-o-cloud-arrow-up'),
+                        ->icon('heroicon-c-document-magnifying-glass'),
                     Tables\Actions\Action::make('search2_upload')
                         ->label('Search 2 Upload')
                         ->modelLabel('Search 2 Upload')
@@ -164,7 +177,7 @@ class TSRRelationManager extends RelationManager
                                     'Searches'
                                 )
                             ]))
-                        ->icon('heroicon-o-cloud-arrow-up'),
+                        ->icon('heroicon-c-document-magnifying-glass'),
                     Tables\Actions\Action::make('ds_file_upload')
                         ->label('DS File Upload')
                         ->modelLabel('DS File Upload')
@@ -180,16 +193,26 @@ class TSRRelationManager extends RelationManager
                                     'DS'
                                 )
                             ]))
-                        ->icon('heroicon-o-cloud-arrow-up'),
+                        ->icon('heroicon-s-finger-print'),
 
                     Tables\Actions\Action::make('add_query')->label('Add Query')
                         ->modelLabel('Add Query')
                         ->form(fn($form, $record) => self::add_query_form($form, $record))
-                        ->icon('heroicon-o-plus-circle'),
+                        ->icon('heroicon-c-exclamation-triangle')
+                        ->requiresConfirmation()
+                        ->color('danger')
+                        ->hidden(fn($record) => !empty($record->query))
+                        ->action(function ($data, $record) {
+                            $record->update([
+                                'query' => $data['query']
+                            ]);
+                        }),
                     Tables\Actions\Action::make('resolve_query')
                         ->label('Resolve Query')
-                        ->icon('heroicon-o-check-circle')
+                        ->icon('heroicon-c-exclamation-triangle')
                         ->requiresConfirmation()
+                        ->hidden(fn($record) => empty($record->query))
+                        ->color('success')
                         ->action(function ($record) {
                             $record->update([
                                 'query' => null
