@@ -222,12 +222,14 @@ class TSRRelationManager extends RelationManager
                     // Tables\Actions\Action::make('ds_report_upload')->label('DS Report Upload'),
 
                 ]),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->modalHeading(fn($record) => 'Edit TSR #' . $record->tsr_number),
                 //                 Tables\Actions\DeleteAction::make(),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()->label('New TSR')
-                    ->modelLabel('New TSR')
+                    ->modalHeading('New TSR')
+
             ])
             ->emptyStateHeading('No TSR yet')
             ->emptyStateDescription('Once you create your first TSR, it will appear here.')

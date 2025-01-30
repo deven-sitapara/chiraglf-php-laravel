@@ -12,6 +12,12 @@ class EditFile extends EditRecord
     use RedirectsToListingPage;
 
     protected static string $resource = FileResource::class;
+    // protected static ?string $title = 'Edit File 1';
+
+    public function getHeading(): string
+    {
+        return 'Edit File #' . $this->getRecord()->id; // Assuming 'id' is the file ID
+    }
 
     protected function getHeaderActions(): array
     {

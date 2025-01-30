@@ -82,7 +82,9 @@ class TSRResource extends Resource
                 Tables\Actions\CreateAction::make()->label('New TSR')
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->modalHeading('Edit TSR')
+                    ,
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
