@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\FileResource\RelationManagers;
 
 use App\Filament\Admin\Resources\CompanyResource\CompanyResource;
 use App\Filament\Admin\Resources\TSRResource\TSRResource;
+use App\Forms\Components\OneDriveFileUpload;
 use App\Helpers\FileHelper;
 use App\Helpers\OneDriveFileHelper;
 use App\Services\OneDriveService;
@@ -23,6 +24,7 @@ use Filament\Tables\Columns\Column;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class TSRRelationManager extends RelationManager
 {
@@ -48,21 +50,6 @@ class TSRRelationManager extends RelationManager
 
             ]);
     }
-    public static function search1_upload_form($form)
-    {
-        // Log::info(print_r($form->getState(), true));
-        return $form
-            ->schema([
-                FileHelper::fileUploadComponent(
-                    'search1_file_id',
-                    'search1_file_url',
-                    'Search 1',
-                    'Searches'
-                )
-            ]);
-    }
-
-
 
     public function table(Table $table): Table
     {
@@ -154,12 +141,19 @@ class TSRRelationManager extends RelationManager
                         // })
                         ->form(fn($form) => $form
                             ->schema([
-                                FileHelper::fileUploadComponent(
-                                    'search1_file_id',
-                                    'search1_file_url',
-                                    'Search 1',
-                                    'Searches'
-                                )
+                                OneDriveFileUpload::make('search1_file_id')
+                                    ->label('Search 1')
+                                    ->urlField('search1_file_url')
+                                    ->directory('Searches')
+                                    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
+                                        return 'TSR-Search1-' . $record->tsr_number . '.' . $file->getClientOriginalExtension();
+                                    })
+                                // FileHelper::fileUploadComponent(
+                                //     'search1_file_id',
+                                //     'search1_file_url',
+                                //     'Search 1',
+                                //     'Searches'
+                                // )
                             ]))
                         ->icon('heroicon-c-document-magnifying-glass'),
                     Tables\Actions\Action::make('search2_upload')
@@ -170,12 +164,19 @@ class TSRRelationManager extends RelationManager
                         // })
                         ->form(fn($form) => $form
                             ->schema([
-                                FileHelper::fileUploadComponent(
-                                    'search2_file_id',
-                                    'search2_file_url',
-                                    'Search 2',
-                                    'Searches'
-                                )
+                                OneDriveFileUpload::make('search2_file_id')
+                                    ->label('Search 2')
+                                    ->urlField('search2_file_url')
+                                    ->directory('Searches')
+                                    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
+                                        return 'TSR-Search2-' . $record->tsr_number . '.' . $file->getClientOriginalExtension();
+                                    })
+                                // FileHelper::fileUploadComponent(
+                                //     'search2_file_id',
+                                //     'search2_file_url',
+                                //     'Search 2',
+                                //     'Searches'
+                                // )
                             ]))
                         ->icon('heroicon-c-document-magnifying-glass'),
                     Tables\Actions\Action::make('ds_file_upload')
@@ -186,12 +187,20 @@ class TSRRelationManager extends RelationManager
                         // })
                         ->form(fn($form) => $form
                             ->schema([
-                                FileHelper::fileUploadComponent(
-                                    'ds_file_id',
-                                    'ds_file_url',
-                                    'DS File',
-                                    'DS'
-                                )
+                                OneDriveFileUpload::make('ds_file_id')
+                                    ->label('DS File')
+                                    ->urlField('ds_file_url')
+                                    ->directory('DS')
+                                    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
+                                        return 'TSR-DS-' . $record->tsr_number . '.' . $file->getClientOriginalExtension();
+                                    })
+
+                                // FileHelper::fileUploadComponent(
+                                //     'ds_file_id',
+                                //     'ds_file_url',
+                                //     'DS File',
+                                //     'DS'
+                                // )
                             ]))
                         ->icon('heroicon-s-finger-print'),
 
