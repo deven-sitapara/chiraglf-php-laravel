@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\DocumentResource;
 
 use App\Filament\Admin\Resources\FileResource\FileResource;
+use App\Forms\Components\OneDriveFileUpload;
 use App\Models\Document;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\DatePicker;
@@ -15,6 +16,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use phpDocumentor\Reflection\Types\Self_;
 
 class DocumentResource extends Resource
@@ -82,8 +84,59 @@ class DocumentResource extends Resource
             ->heading('Documents')
             ->actions([
 
+                Tables\Actions\Action::make('rr_file_url')
+                    ->label('')
+                    ->tooltip('Open RR File')
+                    ->icon('heroicon-o-eye')
+                    ->hidden(function ($record) {
+                        return !$record->rr_file_url;
+                    })
+                    ->url(fn($record) => $record->rr_file_url)
+                    ->openUrlInNewTab(),
+                Tables\Actions\Action::make('stamp_duty_file_url')
+                    ->label('')
+                    ->tooltip('Open Stamp Duty File')
+                    ->icon('heroicon-o-eye')
+                    ->hidden(function ($record) {
+                        return !$record->stamp_duty_file_url;
+                    })
+                    ->url(fn($record) => $record->stamp_duty_file_url)
+                    ->openUrlInNewTab(),
+                Tables\Actions\Action::make('token_file_url')
+                    ->label('')
+                    ->tooltip('Open Token File')
+                    ->icon('heroicon-o-eye')
+                    ->hidden(function ($record) {
+                        return !$record->token_file_url;
+                    })
+                    ->url(fn($record) => $record->token_file_url)
+                    ->openUrlInNewTab(),
+                Tables\Actions\Action::make('appointment_file_url')
+                    ->label('')
+                    ->tooltip('Open Appointment File')
+                    ->icon('heroicon-o-eye')
+                    ->hidden(function ($record) {
+                        return !$record->appointment_file_url;
+                    })
+                    ->url(fn($record) => $record->appointment_file_url)
+                    ->openUrlInNewTab(),
+                Tables\Actions\Action::make('reappointment_file_url')
+                    ->label('')
+                    ->tooltip('Open ReAppointment File')
+                    ->icon('heroicon-o-eye')
+                    ->hidden(function ($record) {
+                        return !$record->reappointment_file_url;
+                    })
+                    ->url(fn($record) => $record->reappointment_file_url)
+                    ->openUrlInNewTab(),
+
+
+
                 Tables\Actions\ActionGroup::make(
                     [
+
+
+
                         //- New
                         //- Edit
                         //- RR Upload
@@ -91,12 +144,92 @@ class DocumentResource extends Resource
                         //• Token File Upload
                         //• Appointment File Upload
                         //• ReAppointment File Upload
+                        Tables\Actions\Action::make('rr_upload')
+                            ->label('RR File Upload')
+                            ->modelLabel('RR File Upload')
+                            // ->hidden(function ($record) {
+                            //     return !$record->search1_file_url;
+                            // })
+                            ->form(fn($form) => $form
+                                ->schema([
+                                    OneDriveFileUpload::make('rr_file_path')
+                                        ->label('RR File')
+                                        ->urlField('rr_file_url')
+                                        ->directory('Documents')
+                                        ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
+                                            return 'Documents-RR-' . $record->document_number . '.' . $file->getClientOriginalExtension();
+                                        })
+                                ]))
+                            ->icon('heroicon-s-document-arrow-up'),
+                        Tables\Actions\Action::make('stamp_duty_upload') // Stamp Duty Upload
+                            ->label('Stamp Duty Upload')
+                            ->modelLabel('Stamp Duty Upload')
+                            // ->hidden(function ($record) {
+                            //     return !$record->search1_file_url;
+                            // })
+                            ->form(fn($form) => $form
+                                ->schema([
+                                    OneDriveFileUpload::make('stamp_duty_file_path')
+                                        ->label('Stamp Duty File')
+                                        ->urlField('stamp_duty_file_url')
+                                        ->directory('Documents')
+                                        ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
+                                            return 'Documents-StampDuty-' . $record->document_number . '.' . $file->getClientOriginalExtension();
+                                        })
+                                ]))
+                            ->icon('heroicon-s-document-arrow-up'),
+                        Tables\Actions\Action::make('token_file_upload') // Token File Upload
+                            ->label('Token File Upload')
+                            ->modelLabel('Token File Upload')
+                            // ->hidden(function ($record) {
+                            //     return !$record->search1_file_url;
+                            // })
+                            ->form(fn($form) => $form
+                                ->schema([
+                                    OneDriveFileUpload::make('token_file_path')
+                                        ->label('Token File')
+                                        ->urlField('token_file_url')
+                                        ->directory('Documents')
+                                        ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
+                                            return 'Documents-Token-' . $record->document_number . '.' . $file->getClientOriginalExtension();
+                                        })
+                                ]))
+                            ->icon('heroicon-s-document-arrow-up'),
+                        Tables\Actions\Action::make('appointment_file_upload') // Appointment File Upload
+                            ->label('Appointment File Upload')
+                            ->modelLabel('Appointment File Upload')
+                            // ->hidden(function ($record) {
+                            //     return !$record->search1_file_url;
+                            // })
+                            ->form(fn($form) => $form
+                                ->schema([
+                                    OneDriveFileUpload::make('appointment_file_path')
+                                        ->label('Appointment File')
+                                        ->urlField('appointment_file_url')
+                                        ->directory('Documents')
+                                        ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
+                                            return 'Documents-Appointment-' . $record->document_number . '.' . $file->getClientOriginalExtension();
+                                        })
+                                ]))
+                            ->icon('heroicon-s-document-arrow-up'),
+                        Tables\Actions\Action::make('reappointment_file_upload') // ReAppointment File Upload
+                            ->label('ReAppointment File Upload')
+                            ->modelLabel('ReAppointment File Upload')
+                            // ->hidden(function ($record) {
+                            //     return !$record->search1_file_url;
+                            // })
+                            ->form(fn($form) => $form
+                                ->schema([
+                                    OneDriveFileUpload::make('reappointment_file_path')
+                                        ->label('ReAppointment File')
+                                        ->urlField('reappointment_file_url')
+                                        ->directory('Documents')
+                                        ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
+                                            return 'Documents-ReAppointment-' . $record->document_number . '.' . $file->getClientOriginalExtension();
+                                        })
+                                ]))
+                            ->icon('heroicon-s-document-arrow-up'),
 
-                        Tables\Actions\Action::make('rr_upload')->label('RR Upload'),
-                        Tables\Actions\Action::make('Stamp Duty Upload')->label('Stamp Duty Upload'),
-                        Tables\Actions\Action::make('Token File Upload')->label('Token File Upload'),
-                        Tables\Actions\Action::make('Appointment File Upload')->label('Appointment File Upload'),
-                        Tables\Actions\Action::make('ReAppointment File Upload')->label('ReAppointment File Upload'),
 
                     ]
                 ),

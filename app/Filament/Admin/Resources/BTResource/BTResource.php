@@ -32,7 +32,7 @@ class BTResource extends Resource
         return $form
             ->schema([
                 FileResource::getFileIdField($disableForeignKeys),
-                TextInput::make('document_number')
+                TextInput::make('bt_number')
                     ->helperText(new HtmlString('Auto generates when saved.'))
                     ->disabled(),
                 DatePicker::make('date')

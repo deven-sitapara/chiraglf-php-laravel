@@ -19,6 +19,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -34,44 +35,39 @@ class FileResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(3)
             ->schema([
-                Forms\Components\Section::make('Basic Information')
-                    ->columns(2)
-                    ->schema([
-                        Forms\Components\DateTimePicker::make('date')
-                            ->required()
-                            ->readOnly()
-                            ->default(now()),
-                        Forms\Components\Select::make('branch_id')
-                            ->relationship('branch', 'branch_name')
-                            ->required()
-                            ->preload(),
 
-                        Forms\Components\Select::make('company_id')
-                            ->relationship('company', 'name')
-                            ->required()
-                            ->searchable()
-                            ->preload(),
-                        Forms\Components\TextInput::make('company_reference_number')
-                            ->required()
-                            ->maxLength(255),
-                    ]),
+                Forms\Components\DateTimePicker::make('date')
+                    ->required()
+                    ->readOnly()
+                    ->default(now()),
+                Forms\Components\Select::make('branch_id')
+                    ->relationship('branch', 'branch_name')
+                    ->required()
+                    ->preload(),
 
-                Forms\Components\Section::make('Property Details')
-                    ->columns(2)
-                    ->schema([
-                        Forms\Components\TextInput::make('borrower_name')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('proposed_owner_name')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\Textarea::make('property_descriptions')
-                            ->required()
-                            ->placeholder('Enter detailed property description here...')
-                            ->columnSpanFull()
-                            ->maxLength(65535),
-                    ]),
+                Forms\Components\Select::make('company_id')
+                    ->relationship('company', 'name')
+                    ->required()
+                    ->searchable()
+                    ->preload(),
+                Forms\Components\TextInput::make('company_reference_number')
+                    ->required()
+                    ->maxLength(255),
+
+                Forms\Components\TextInput::make('borrower_name')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('proposed_owner_name')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\Textarea::make('property_descriptions')
+                    ->required()
+                    ->placeholder('Enter detailed property description here...')
+                    ->columnSpanFull()
+                    ->maxLength(65535),
+
             ]);
     }
 
@@ -79,6 +75,16 @@ class FileResource extends Resource
     {
         return $table
             ->columns([
+
+                // SelectColumn::make('status')
+                //     ->options([
+                //         'login' => 'login',
+                //         'queries' => 'queries',
+                //         'update' => 'update',
+                //         'handover' => 'handover',
+                //         'close' => 'close',
+                //     ]),
+
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {

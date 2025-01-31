@@ -3,19 +3,28 @@
 namespace App\Filament\Admin\Resources\TSRResource;
 
 use App\Filament\Admin\Resources\FileResource\FileResource;
+use App\Forms\Components\OneDriveFileUpload;
 use App\Helpers\FileHelper;
+use App\Helpers\OneDriveFileHelper;
 use App\Models\TSR;
+use Exception;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Http\File;
+use Illuminate\Support\Facades\Log;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class TSRResource extends Resource
 {
@@ -63,29 +72,202 @@ class TSRResource extends Resource
             ]);
     }
 
+    public static function add_query_form(Form $form, $record): Form
+    {
+        return $form
+            ->schema([
+                Textarea::make('query')
+                    ->label('Query')
+                    ->required()
+                    ->default($record->query)
+                    ->placeholder('Enter query here...')
+                    ->columnSpanFull()
+                    ->maxLength(500)
 
+            ]);
+    }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('file.id')->label('File Number')->searchable(true),
+                TextColumn::make('file.file_number')->label('File Number'),
                 TextColumn::make('tsr_number')->label('TSR Number'),
                 TextColumn::make('date')->date(),
-            ])
-            //            ->filters([
-            //                SelectFilter::make('file_id')
-            //                    ->relationship('file', 'file_number'),
-            //            ])
-            ->heading('TSRs')
-            ->headerActions([
-                Tables\Actions\CreateAction::make()->label('New TSR')
+                TextColumn::make('query')->label('Query')
+                    ->badge()
+                    ->words(20)
+                    ->color('danger')
+                    ->tooltip(function ($record): string {
+                        return (string) $record->query;
+                    })
             ])
             ->actions([
+
+                //TSR: open generated tsr file
+                Tables\Actions\Action::make('tsr_file_url')
+                    ->label('')
+                    ->tooltip('Open TSR')
+                    ->icon('heroicon-o-eye')
+                    ->hidden(function ($record) {
+                        return !$record->tsr_file_url;
+                    })
+                    ->url(fn($record) => $record->tsr_file_url)
+                    ->openUrlInNewTab(),
+
+                // SEARCH: open search1 file
+                Tables\Actions\Action::make('search1_file_url')
+                    ->label('')
+                    ->tooltip('Open Search1')
+                    ->icon('heroicon-c-document-magnifying-glass')
+                    ->hidden(function ($record) {
+                        return !$record->search1_file_url;
+                    })
+                    ->url(fn($record) => $record->search1_file_url)
+                    ->openUrlInNewTab(),
+
+                // SEARCH: open search2 file
+                Tables\Actions\Action::make('search2_file_url')
+                    ->label('')
+                    ->tooltip('Open Search2')
+                    ->icon('heroicon-c-document-magnifying-glass')
+                    ->hidden(function ($record) {
+                        return !$record->search2_file_url;
+                    })
+                    ->url(fn($record) => $record->search2_file_url)
+                    ->openUrlInNewTab(),
+                // DS: open ds file
+                Tables\Actions\Action::make('ds_file_url')
+                    ->label('')
+                    ->tooltip('DS File')
+                    ->icon('heroicon-s-finger-print')
+                    ->hidden(function ($record) {
+                        return !$record->ds_file_url;
+                    })
+                    ->url(fn($record) => $record->ds_file_url)
+                    ->openUrlInNewTab(),
+
+                //
+                //Action
+                ActionGroup::make([
+                    Tables\Actions\Action::make('generate_file')
+                        ->label('Generate TSR File')
+                        ->icon('heroicon-o-document')
+                        ->hidden(function ($record) {
+                            return $record->tsr_file_id;
+                        })
+                        ->requiresConfirmation('Are you sure you want to generate TSR file?')
+                        ->action(self::generateTSRFile())
+                        ->successNotificationTitle(
+                            'TSR File Generated'
+                        )
+                        ->failureNotificationTitle(
+                            'notification_error'
+                        ),
+                    Tables\Actions\Action::make('open_tsr_file')
+                        ->label('Open TSR File')
+                        ->icon('heroicon-o-eye')
+                        ->hidden(function ($record) {
+                            return !$record->tsr_file_id;
+                        })
+                        ->url(function ($record) {
+                            return $record->tsr_file_url;
+                        })
+                        ->openUrlInNewTab(),
+
+                    Tables\Actions\Action::make('search1_upload')
+                        ->label('Search 1 Upload')
+                        ->modelLabel('Search 1 Upload')
+                        // ->hidden(function ($record) {
+                        //     return !$record->search1_file_url;
+                        // })
+                        ->form(fn($form) => $form
+                            ->schema([
+                                OneDriveFileUpload::make('search1_file_id')
+                                    ->label('Search 1')
+                                    ->urlField('search1_file_url')
+                                    ->directory('TSRs')
+                                    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
+                                        return 'TSR-Search1-' . $record->tsr_number . '.' . $file->getClientOriginalExtension();
+                                    })
+
+                            ]))
+                        ->icon('heroicon-c-document-magnifying-glass'),
+                    Tables\Actions\Action::make('search2_upload')
+                        ->label('Search 2 Upload')
+                        ->modelLabel('Search 2 Upload')
+                        // ->hidden(function ($record) {
+                        //     return !$record->search2_file_url;
+                        // })
+                        ->form(fn($form) => $form
+                            ->schema([
+                                OneDriveFileUpload::make('search2_file_id')
+                                    ->label('Search 2')
+                                    ->urlField('search2_file_url')
+                                    ->directory('TSRs')
+                                    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
+                                        return 'TSR-Search2-' . $record->tsr_number . '.' . $file->getClientOriginalExtension();
+                                    })
+
+                            ]))
+                        ->icon('heroicon-c-document-magnifying-glass'),
+                    Tables\Actions\Action::make('ds_file_upload')
+                        ->label('DS File Upload')
+                        ->modelLabel('DS File Upload')
+                        // ->hidden(function ($record) {
+                        //     return !$record->search2_file_url;
+                        // })
+                        ->form(fn($form) => $form
+                            ->schema([
+                                OneDriveFileUpload::make('ds_file_id')
+                                    ->label('DS File')
+                                    ->urlField('ds_file_url')
+                                    ->directory('DS')
+                                    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
+                                        return 'TSR-DS-' . $record->tsr_number . '.' . $file->getClientOriginalExtension();
+                                    })
+
+                            ]))
+                        ->icon('heroicon-s-finger-print'),
+
+                    Tables\Actions\Action::make('add_query')->label('Add Query')
+                        ->modelLabel('Add Query')
+                        ->form(fn($form, $record) => self::add_query_form($form, $record))
+                        ->icon('heroicon-c-exclamation-triangle')
+                        ->requiresConfirmation()
+                        ->color('danger')
+                        ->hidden(fn($record) => !empty($record->query))
+                        ->action(function ($data, $record) {
+                            $record->update([
+                                'query' => $data['query']
+                            ]);
+                        }),
+                    Tables\Actions\Action::make('resolve_query')
+                        ->label('Resolve Query')
+                        ->icon('heroicon-c-exclamation-triangle')
+                        ->requiresConfirmation()
+                        ->hidden(fn($record) => empty($record->query))
+                        ->color('success')
+                        ->action(function ($record) {
+                            $record->update([
+                                'query' => null
+                            ]);
+                        })
+                        ->hidden(fn($record) => empty($record->query)),
+                    // Tables\Actions\Action::make('ds_report_upload')->label('DS Report Upload'),
+
+                ]),
                 Tables\Actions\EditAction::make()
-                    ->modalHeading('Edit TSR')
-                    ,
+                    ->modalHeading(fn($record) => 'Edit TSR #' . $record->tsr_number),
+                //                 Tables\Actions\DeleteAction::make(),
             ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make()->label('New TSR')
+                    ->modalHeading('New TSR')
+
+            ])
+            ->emptyStateHeading('No TSR yet')
+            ->emptyStateDescription('Once you create your first TSR, it will appear here.')
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -107,5 +289,50 @@ class TSRResource extends Resource
             //            'create' => Pages\CreateTSR::route('/create'),
             //            'edit' => Pages\EditTSR::route('/{record}/edit'),
         ];
+    }
+
+    public static function  generateTSRFile()
+    {
+
+        return function ($record) {
+
+            //step 1 get file content from tsr_file_format of selected company of current tsr file id record
+            $company = $record->file->company;
+            $tsr_format_local_path = storage_path("app/public/" . $company->tsr_file_format); // tsr_file_format/testing-company-tsr_file_format.docx this is default document format
+            Log::info($tsr_format_local_path);
+
+            // get file extension from file name using laravel
+
+            if (!is_file($tsr_format_local_path)) {
+
+                Notification::make()->danger()->title('File does not exist')->send();
+                // throw new Exception('File does not exist');
+                return;
+            }
+            if (is_file($tsr_format_local_path) && !file_exists($tsr_format_local_path)) {
+
+                Notification::make()->danger()->title('File does not exist')->send();
+                // throw new Exception('File does not exist');
+                return;
+            }
+
+
+            $extension = (new File($tsr_format_local_path))->extension();
+
+            // step 2 copy file to create new tsrs/{tsr_number}.docx file
+            $oneDrivePath = "TSRs/{$record->tsr_number}." . $extension;
+
+            // step 3 upload to onedrive
+
+            $fileData = OneDriveFileHelper::storeFile($tsr_format_local_path, $oneDrivePath, false);
+
+            Log::info($fileData);
+            // step 4 get sharable link
+
+            $record->update([
+                'tsr_file_id' => $fileData['path'],
+                'tsr_file_url' => $fileData['webUrl']
+            ]);
+        };
     }
 }
