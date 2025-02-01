@@ -157,7 +157,7 @@ class TSRResource extends Resource
                             return $record->tsr_file_id;
                         })
                         ->requiresConfirmation('Are you sure you want to generate TSR file?')
-                        ->action(self::generateTSRFile())
+                        ->action(FileHelper::generateFile('tsr'))
                         ->successNotificationTitle(
                             'TSR File Generated'
                         )
@@ -289,50 +289,5 @@ class TSRResource extends Resource
             //            'create' => Pages\CreateTSR::route('/create'),
             //            'edit' => Pages\EditTSR::route('/{record}/edit'),
         ];
-    }
-
-    public static function  generateTSRFile()
-    {
-
-        return function ($record) {
-
-            //step 1 get file content from tsr_file_format of selected company of current tsr file id record
-            $company = $record->file->company;
-            $tsr_format_local_path = storage_path("app/public/" . $company->tsr_file_format); // tsr_file_format/testing-company-tsr_file_format.docx this is default document format
-            Log::info($tsr_format_local_path);
-
-            // get file extension from file name using laravel
-
-            if (!is_file($tsr_format_local_path)) {
-
-                Notification::make()->danger()->title('File does not exist')->send();
-                // throw new Exception('File does not exist');
-                return;
-            }
-            if (is_file($tsr_format_local_path) && !file_exists($tsr_format_local_path)) {
-
-                Notification::make()->danger()->title('File does not exist')->send();
-                // throw new Exception('File does not exist');
-                return;
-            }
-
-
-            $extension = (new File($tsr_format_local_path))->extension();
-
-            // step 2 copy file to create new tsrs/{tsr_number}.docx file
-            $oneDrivePath = "TSRs/{$record->tsr_number}." . $extension;
-
-            // step 3 upload to onedrive
-
-            $fileData = OneDriveFileHelper::storeFile($tsr_format_local_path, $oneDrivePath, false);
-
-            Log::info($fileData);
-            // step 4 get sharable link
-
-            $record->update([
-                'tsr_file_id' => $fileData['path'],
-                'tsr_file_url' => $fileData['webUrl']
-            ]);
-        };
     }
 }

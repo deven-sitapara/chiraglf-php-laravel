@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\ExtraWorkResource;
 
 use App\Filament\Admin\Resources\FileResource\FileResource;
 use App\Forms\Components\OneDriveFileUpload;
+use App\Helpers\FileHelper;
 use App\Helpers\OneDriveFileHelper;
 use App\Models\ExtraWork;
 use Filament\Actions\Action;
@@ -126,7 +127,7 @@ class ExtraWorkResource extends Resource
                             return $record->ew_file_url;
                         })
                         ->requiresConfirmation('Are you sure you want to generate Extra Work file?')
-                        ->action(self::generateEWFile())
+                        ->action(FileHelper::generateFile('extra_work'))
                         ->successNotificationTitle('File generated successfully')
                         ->failureNotificationTitle('Failed to generate file'),
                     Tables\Actions\Action::make('search1_file_path') // Search 1 File Upload
@@ -210,38 +211,5 @@ class ExtraWorkResource extends Resource
             //            'create' => Pages\CreateExtraWork::route('/create'),
             //            'edit' => Pages\EditExtraWork::route('/{record}/edit'),
         ];
-    }
-
-    public static function  generateEWFile()
-    {
-
-        return function ($record) {
-
-            //step 1 get file content from tsr_file_format of selected company of current tsr file id record
-            $company = $record->file->company;
-            $ew_format_local_path = storage_path("app/public/" . $company->ew_file_format); // tsr_file_format/testing-company-tsr_file_format.docx this is default document format
-            Log::info($ew_format_local_path);
-
-            // get file extension from file name using laravel
-
-            $extension = (new File($ew_format_local_path))->extension();
-
-            // step 2 copy file to create new tsrs/{tsr_number}.docx file
-            $oneDrivePath = "ExtraWorks/{$record->extra_work_number}." . $extension;
-
-            // step 3 upload to onedrive
-
-            $fileData = OneDriveFileHelper::storeFile($ew_format_local_path, $oneDrivePath, false);
-
-            Log::info($fileData);
-            // step 4 get sharable link
-
-
-
-            $record->update([
-                'ew_file_path' => $fileData['path'],
-                'ew_file_url' => $fileData['webUrl']
-            ]);
-        };
     }
 }

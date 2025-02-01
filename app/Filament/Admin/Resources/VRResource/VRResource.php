@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\VRResource;
 
 use App\Filament\Admin\Resources\FileResource\FileResource;
 use App\Forms\Components\OneDriveFileUpload;
+use App\Helpers\FileHelper;
 use App\Helpers\OneDriveFileHelper;
 use App\Models\VR;
 use Filament\Forms\Components\DatePicker;
@@ -121,7 +122,7 @@ class VRResource extends Resource
                             return $record->vr_file_url;
                         })
                         ->requiresConfirmation('Are you sure you want to generate VR file?')
-                        ->action(self::generateVRFile())
+                        ->action(FileHelper::generateFile('vr'))
                         ->successNotificationTitle('File generated successfully')
                         ->failureNotificationTitle('Failed to generate file'),
 
@@ -192,36 +193,5 @@ class VRResource extends Resource
         return [
             'index' => Pages\ListVRS::route('/'),
         ];
-    }
-
-    public static function  generateVRFile()
-    {
-
-        return function ($record) {
-
-            //step 1 get file content from tsr_file_format of selected company of current tsr file id record
-            $company = $record->file->company;
-            $vr_format_local_path = storage_path("app/public/" . $company->vr_file_format); // tsr_file_format/testing-company-tsr_file_format.docx this is default document format
-            Log::info($vr_format_local_path);
-
-            // get file extension from file name using laravel
-
-            $extension = (new File($vr_format_local_path))->extension();
-
-            // step 2 copy file to create new tsrs/{tsr_number}.docx file
-            $oneDrivePath = "VRs/{$record->vr_number}." . $extension;
-
-            // step 3 upload to onedrive
-
-            $fileData = OneDriveFileHelper::storeFile($vr_format_local_path, $oneDrivePath, false);
-
-            Log::info($fileData);
-            // step 4 get sharable link
-
-            $record->update([
-                'vr_file_path' => $fileData['path'],
-                'vr_file_url' => $fileData['webUrl']
-            ]);
-        };
     }
 }

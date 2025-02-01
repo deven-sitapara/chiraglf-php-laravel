@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\SearchResource;
 
 use App\Filament\Admin\Resources\FileResource\FileResource;
 use App\Forms\Components\OneDriveFileUpload;
+use App\Helpers\FileHelper;
 use App\Helpers\OneDriveFileHelper;
 use App\Models\Search;
 use Filament\Forms\Components\DatePicker;
@@ -112,7 +113,7 @@ class SearchResource extends Resource
                                 return $record->search_url;
                             })
                             ->requiresConfirmation('Are you sure you want to generate Search file?')
-                            ->action(self::generateSearchFile())
+                            ->action(FileHelper::generateFile('search'))
                             ->successNotificationTitle('File generated successfully')
                             ->failureNotificationTitle('Failed to generate file'),
                         Tables\Actions\Action::make('search1_file_path') // Search 1 File Upload
@@ -182,38 +183,5 @@ class SearchResource extends Resource
             //            'create' => Pages\CreateSearch::route('/create'),
             //            'edit' => Pages\EditSearch::route('/{record}/edit'),
         ];
-    }
-
-
-    public static function  generateSearchFile()
-    {
-
-        return function ($record) {
-
-            //step 1 get file content from tsr_file_format of selected company of current tsr file id record
-            $company = $record->file->company;
-            $search_file_format_local_path = storage_path("app/public/" . $company->search_file_format); // tsr_file_format/testing-company-tsr_file_format.docx this is default document format
-            Log::info($search_file_format_local_path);
-
-            // get file extension from file name using laravel
-
-            $extension = (new File($search_file_format_local_path))->extension();
-
-            // step 2 copy file to create new tsrs/{tsr_number}.docx file
-            $oneDrivePath = "Searches/{$record->search_number}." . $extension;
-
-            // step 3 upload to onedrive
-
-            $fileData = OneDriveFileHelper::storeFile($search_file_format_local_path, $oneDrivePath, false);
-
-            Log::info($fileData);
-            // step 4 get sharable link
-
-
-            $record->update([
-                'search_path' => $fileData['path'],
-                'search_url' => $fileData['webUrl']
-            ]);
-        };
     }
 }

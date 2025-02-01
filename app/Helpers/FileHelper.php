@@ -5,6 +5,8 @@ namespace App\Helpers;
 use Closure;
 use Exception;
 use Filament\Forms\Components\FileUpload;
+use Filament\Notifications\Notification;
+use Illuminate\Http\File;
 use Illuminate\Support\Facades\Log;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -89,5 +91,97 @@ class FileHelper
             // Log error
             return null;
         }
+    }
+
+    public static function generateFile($type)
+    {
+        return function ($record) use ($type) {
+            try {
+                $config = self::getFileConfig($type);
+
+                // Get company and file path
+                $company = $record->file->company;
+                $format_local_path = storage_path("app/public/" . $company->{$config['format_field']});
+
+                Log::info($format_local_path);
+
+                $typeUpper = str($type)->upper();
+
+                // Validate file existence
+                if (!is_file($format_local_path) || !file_exists($format_local_path)) {
+
+                    Notification::make()->danger()->title("{$typeUpper} Format File does not exist in company.")->send();
+                    // throw new Exception('File does not exist');
+                    return;
+                }
+
+                // Get file extension and create OneDrive path
+                $extension = (new File($format_local_path))->extension();
+                $oneDrivePath = "{$config['folder']}/{$record->{$config['number_field']}}.$extension";
+
+                // Upload to OneDrive
+                $fileData = OneDriveFileHelper::storeFile($format_local_path, $oneDrivePath, false);
+                Log::info($fileData);
+
+                // Update record
+                $record->update([
+                    $config['path_field'] => $fileData['path'],
+                    $config['url_field'] => $fileData['webUrl']
+                ]);
+
+                Notification::make()->success()->title("{$typeUpper} File geneated succesfully ")->send();
+            } catch (\Exception $e) {
+                Log::error("File Generation Error: " . $e->getMessage());
+                Notification::make()
+                    ->danger()
+                    ->title('Error generating file')
+                    ->body($e->getMessage())
+                    ->send();
+            }
+        };
+    }
+
+    protected static function getFileConfig($type)
+    {
+        $configs = [
+            //file type
+            'tsr' => [
+                'format_field' => 'tsr_file_format', // company file format
+                'folder' => 'TSRs',                // One Drive Folder
+                'number_field' => 'tsr_number',     // Model number field ex. TSR:tsr_number
+                'path_field' => 'tsr_file_id',     // One Drive path field to store path like TSRs/104-TS-1.docx or Searches/Searches-DS-104-SR-1.docx
+                'url_field' => 'tsr_file_url'        // One Drive url field to store url like https://one-drive-url/TSRs/104-TS-1.docx
+            ],
+            'document' => [
+                'format_field' => 'document_file_format', // company file format
+                'folder' => 'Documents',                // One Drive Folder
+                'number_field' => 'document_number',     // Model number field ex. TSR:tsr_number
+                'path_field' => 'document_file_path',     // One Drive path field to store path like TSRs/104-TS-1.docx or Searches/Searches-DS-104-SR-1.docx
+                'url_field' => 'document_file_url'        // One Drive url field to store url like https://one-drive-url/TSRs/104-TS-1.docx
+            ],
+            'extra_work' => [
+                'format_field' => 'ew_file_format',
+                'folder' => 'ExtraWorks',
+                'number_field' => 'extra_work_number',
+                'path_field' => 'ew_file_path',
+                'url_field' => 'ew_file_url'
+            ],
+            'search' => [
+                'format_field' => 'search_file_format',
+                'folder' => 'Searches',
+                'number_field' => 'search_number',
+                'path_field' => 'search_path',
+                'url_field' => 'search_url'
+            ],
+            'vr' => [
+                'format_field' => 'vr_file_format',
+                'folder' => 'VRs',
+                'number_field' => 'vr_number',
+                'path_field' => 'vr_file_path',
+                'url_field' => 'vr_file_url'
+            ]
+        ];
+
+        return $configs[strtolower($type)] ?? throw new \Exception('Invalid file type');
     }
 }
